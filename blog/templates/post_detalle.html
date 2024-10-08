@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<section>
+    <h1>{{ post.titulo }}</h1>
+    {%if post.fecha_publicacion %}
+        <div>
+            {{post.fecha_publicacion}}
+        </div>
+    {% else %}
+        <a href="#">Publicar articulo</a>
+    {% endif %}
+</section>
+<p>
+    {{ post.contenido }}
+</p>
+
+<hr>
+
+<div class="container">
+
+    {% for comentario in post.comentarios.all %}
+        <p> {{comentario.texto}}</p>
+        <p>Autor: {{comentario.autor}}</p>
+    {% empty %}
+        <p>No hay comentarios</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

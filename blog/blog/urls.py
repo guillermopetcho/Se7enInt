@@ -23,6 +23,8 @@ from myblog.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("",listar_posts, name="listar_posts"),
+    path("posts-detalle/<int:id>",postdetalle, name="postdetalle"),
+    
     #path('', home_view, name='home_view'),
     #path('index', index, name='index'),
 
