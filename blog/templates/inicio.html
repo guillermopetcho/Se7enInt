@@ -1,123 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Inicio - Mi Blog</title>
-    <style>
-        body {
-            
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav {
-            background-color: #444;
-            padding: 15px;
-            text-align: center;
-        }
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        main {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        .post {
-            display: flex;
-            background-color: white;
-            margin: 15px;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: calc(70% - 40px);
-        }
-        .sidebar {
-            background-color: #eee;
-            padding: 20px;
-            width: calc(25% - 40px);
-            margin: 15px;
-        }
-        .post h2, .sidebar h2 {
-            color: #333;
-        }
-        .post p {
-            color: #666;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-        footer p {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<header>
-    <h1>Mi Blog</h1>
-    <p>Un lugar para compartir pensamientos e ideas</p>
-</header>
+{% load static %}
 
-<nav>
-    <a href="#">Inicio</a>
-    <a href="#">Sobre mí</a>
-    <a href="#">Contacto</a>
-</nav>
-
-<main>
+{% block content %}
     <section>
         <div class="post">
             {% for post in posts %}
             <article>
                 <h3><a>{{ post.titulo }}</a></h3>
-                <p>Contenido:{{ post.resumen }}</p>
+                <p>Contenido: {{ post.resumen }}</p>
                 <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
-                <p>Autor:{{ post.contenido }}</p>
+                <p>Autor: {{ post.autor }}</p>
+                <a href="{% url 'postdetalle' id=post.id %}">leer más</a>
             </article>
             {% endfor %}
         </div>
-        
     </section>
-
-    <aside class="sidebar">
-        <h2>Sobre el blog</h2>
-        <p>Este blog trata sobre tecnología, ciencia y otros temas interesantes. Aquí puedes encontrar reflexiones y análisis profundos.</p>
-        
-        <h2>Categorías</h2>
-        <ul>
-            <li><a href="#">Fisica</a></li>
-            <li><a href="#">Quimica</a></li>
-            <li><a href="#">Matematicas</a></li>
-            <li><a href="#">Biologia</a></li>
-        </ul>
-    </aside>
-</main>
-
-<footer>
-    <p>&copy; 2024 Mi Blog. Todos los derechos reservados.</p>
-</footer>
-
-</body>
-</html>
+{% endblock %}

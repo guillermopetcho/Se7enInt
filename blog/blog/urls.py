@@ -14,18 +14,43 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+
+
+
+from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path
-from myblog.views import *
-
-
+from myblog.views import index, lista_posts, postdetalle, acerca_de, contactos
+#from . import views
+from myblog import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("",listar_posts, name="listar_posts"),
-    path("posts-detalle/<int:id>",postdetalle, name="postdetalle"),
-    
+    path("", index, name="inicio"),
+    path("acerca_de/", acerca_de, name="acerca_de"),  # Debería tener una vista específica para "acerca_de"
+    path("contacto/", contactos, name="contacto"),    # Debería tener una vista específica para "contacto"
+    path("posts/", lista_posts, name="listar_posts"),
+    path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
+    path('signup/',views.signup, name='signup'),
+]
+
+
+"""from django.contrib import admin
+from django.urls import path
+from myblog.views import *
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("",index, name="inicio"),
+    path("acerca_de",index, name="acerca_de"),
+    path("contacto",index, name="contacto"),
+    path("posts",lista_posts, name="listar_posts"),
+    path("posts-detalle/<int:id>", postdetalle , name="postdetalle"),
     #path('', home_view, name='home_view'),
     #path('index', index, name='index'),
 
 ]
+"""

@@ -7,11 +7,11 @@ from django.conf import settings
 class Post(models.Model):
     autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=200)
-    resumen = models.TextField()
+    resumen = models.TextField(max_length=50000)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_publicacion = models.DateTimeField(blank=True, null=True)
     ## ORM
-    contenido = models.CharField(max_length=5000)
+    contenido = models.TextField(max_length=50000)
     imagen = models.ImageField(null=True, blank= True,upload_to= "img/posts", help_text= "Imagen del post")
     categorias = models.ManyToManyField('Categoria', related_name="posts")
 
@@ -34,7 +34,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
-class comentarios(models.Model):
+class Comentario(models.Model):
     #relacion entre uno y muchos
     autor_comentario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey("Post",related_name='comentarios', on_delete=models.CASCADE)
@@ -43,6 +43,6 @@ class comentarios(models.Model):
     fecha_creacion = models.DateTimeField(default=timezone.now)
     aprobado = models.BooleanField(default=True)
 
-    def aprobarcomentario(self):
+    def aprobar_comentario(self):
         self.aprobado = True
         self.save()
