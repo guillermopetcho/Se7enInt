@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Administradores - Mi Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            background-color: #444;
+            padding: 15px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+            gap: 30px;
+        }
+        .profile-card {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .profile-card h3 {
+            margin: 0;
+            color: #333;
+        }
+        .profile-card p {
+            color: #777;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Mi Blog</h1>
+    <p>Conoce a los Administradores</p>
+</header>
+
+<nav>
+    <a href="index.html">Inicio</a>
+    <a href="#">Administradores</a>
+</nav>
+
+<div class="container">
+    <h2>Nuestro Equipo de Administradores</h2>
+    <div class="profile-grid">
+        <!-- Administrador 1 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 1">
+            <h3>Guillermo Petcho</h3>
+            <p>Correo: guillermo@example.com</p>
+            <p>Provincia: Buenos Aires</p>
+        </div>
+        <!-- Administrador 2 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 2">
+            <h3>María González</h3>
+            <p>Correo: maria@example.com</p>
+            <p>Provincia: Córdoba</p>
+        </div>
+        <!-- Administrador 3 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 3">
+            <h3>Juan Pérez</h3>
+            <p>Correo: juan@example.com</p>
+            <p>Provincia: Mendoza</p>
+        </div>
+        <!-- Administrador 4 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 4">
+            <h3>Ana López</h3>
+            <p>Correo: ana@example.com</p>
+            <p>Provincia: Santa Fe</p>
+        </div>
+        <!-- Administrador 5 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 5">
+            <h3>Carlos García</h3>
+            <p>Correo: carlos@example.com</p>
+            <p>Provincia: Salta</p>
+        </div>
+        <!-- Administrador 6 -->
+        <div class="profile-card">
+            <img src="files/imagen-perfil.png" alt="Admin 6">
+            <h3>Sofía Díaz</h3>
+            <p>Correo: sofia@example.com</p>
+            <p>Provincia: Chaco</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
