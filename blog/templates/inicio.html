@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
 {% block content %}
-    <section>
-        <div class="post">
-            {% for post in posts %}
-            <article>
-                <h3><a>{{ post.titulo }}</a></h3>
-                <p>Contenido: {{ post.resumen }}</p>
-                <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
-                <p>Autor: {{ post.autor }}</p>
-                <a href="{% url 'postdetalle' id=post.id %}">leer más</a>
-            </article>
-            {% endfor %}
-        </div>
-    </section>
+<section>
+    <div class="post">
+        {% for post in ultimosposts %}
+        <article class="post">
+            <h3><a href="{% url 'postdetalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
+            <p>Contenido: {{ post.resumen }}</p>
+            <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
+            <p>Autor: {{ post.autor }}</p>
+            <a href="{% url 'postdetalle' post.id %}">Leer más</a>
+        </article>
+        {% empty %}
+            <p>No hay posts disponibles.</p>  <!-- Mensaje si no hay posts -->
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
+
+

@@ -15,30 +15,55 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-
-
-
-from django.contrib.auth import views as auth_views
+#version de control v4
 from django.contrib import admin
 from django.urls import path
-from myblog.views import index, lista_posts, postdetalle, acerca_de, contactos
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
+from myblog.views import inicio, lista_posts, postdetalle, acerca_de, contactos
+from myblog import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),  # Ruta para el panel de administración
+    path("", inicio, name="inicio"),  # Ruta para la vista de inicio
+    path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
+    path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
+    path("posts/", lista_posts, name="listar_posts"),  # Ruta para listar posts
+    path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),  # Ruta para detalles de un post
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
+    path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
+    path('signup/', views.signup, name='signup'),  # Ruta para registro
+    path('perfil_usuario/', views.perfil_usuario, name='perfil_usuario'),  # Ruta para perfil
+]
+
+
+
+"""
+## version de control v2 - v3
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
+from django.contrib import admin
+from django.urls import path
+from myblog.views import inicio, lista_posts, postdetalle, acerca_de, contactos
 #from . import views
 from myblog import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", index, name="inicio"),
+    path("", inicio, name="inicio"),
     path("acerca_de/", acerca_de, name="acerca_de"),  # Debería tener una vista específica para "acerca_de"
     path("contacto/", contactos, name="contacto"),    # Debería tener una vista específica para "contacto"
     path("posts/", lista_posts, name="listar_posts"),
     path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('signup/',views.signup, name='signup'),
 ]
+"""
 
-
-"""from django.contrib import admin
+"""
+##version de control v1
+from django.contrib import admin
 from django.urls import path
 from myblog.views import *
 

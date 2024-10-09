@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Inicio - Mi Blog</title>
     <style>
+        /* Estilos CSS */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -80,13 +82,128 @@
                 width: 100%;
             }
         }
+        .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+        gap: 30px;
+        }
+        .profile-card {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .profile-card h3 {
+            margin: 0;
+            color: #333;
+        }
+        .profile-card p {
+            color: #777;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .container_acerca_de {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .h2_acerca_de {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Estilos para el formulario de contacto */
+        .container_contacto {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .contact_form {
+            display: flex;
+            flex-direction: column;
+        }
+        .contact_label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input_contact, .select_contact, .textarea_contact {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .textarea_contact {
+            resize: vertical;
+        }
+
+        .input_contact[type="file"] {
+            padding: 5px;
+        }
+        .input_contact[type="submit"] {
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .input_contact[type="submit"]:hover {
+            background-color: #555;
+        }
+        .h2_contact {
+            text-align: center;
+            color: #333;
+        }
+        /* Estilos CSS para el perfil de un usuario */
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .profile-info div {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        label {
+            font-weight: bold;
+        }
+        .btn-edit {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .btn-edit:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Mi Blog</h1>
-    <p>Un lugar para compartir pensamientos e ideas</p>
+    {% if user.is_authenticated %}
+        <h1>Se7enIntelligence</h1>
+        <p>Bienvenido {{ user.username }}, encuentra toda la informacion sobre inteligencia artificial</p>
+    {% else %}
+        <h1>Se7enIntelligence</h1>
+        <p>Bienvenido a Se7enIntelligence, encuentra toda la informacion sobre inteligencia artificial</p>
+    {% endif %}
 </header>
 
 <nav>
@@ -97,11 +214,13 @@
     <!-- Verifica si el usuario está autenticado -->
     <span style="float: right;">
         {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">Cerrar sesión ({{ user.username }})</a>
-        {% else %}
-            <a href="{% url 'login' %}">Iniciar sesión</a> | 
-            <a href="{% url 'signup' %}">Registrarse</a>
-        {% endif %}
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">Iniciar sesión</a> | <a href="{% url 'signup' %}">Registrarse</a>
+    {% endif %}
     </span>
 </nav>
 
@@ -109,6 +228,7 @@
 <main>
     {% block content %}
     {% endblock %}
+
 
     <aside class="sidebar">
         <h2>Sobre el blog</h2>

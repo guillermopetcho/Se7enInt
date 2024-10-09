@@ -106,9 +106,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_REDIRECT_URL = 'inicio'
-
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'  # URL donde redirigir si no está autenticado
+LOGIN_REDIRECT_URL = 'inicio'  # URL a donde redirigir después de iniciar sesión
+LOGOUT_REDIRECT_URL = 'inicio'  # URL a donde redirigir después de cerrar sesión
 
 
 # Internationalization

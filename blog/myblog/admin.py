@@ -4,10 +4,20 @@ from .models import Comentario
 from django.utils.safestring import mark_safe
 from django.contrib import admin
 
-
+## version 2.0 
 from django.contrib import admin
 from .models import Post, Categoria, Comentario
 from django.utils.safestring import mark_safe
+
+## version 3 privilegios de usuarios
+
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+from django.apps import apps
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+
+
 
 # Register your models here.
 class CategoriasInline(admin.StackedInline):
@@ -54,6 +64,44 @@ class ComentariosAdmin(admin.ModelAdmin):
 
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('nombre',)  # Ejemplo de personalización
+
+#privelegios de usuarios
+
+@receiver(post_migrate)
+def create_user_roles(sender, **kwargs): # Crea los grupos y los permisos
+    # Cargar los modelos necesarios
+    Post = apps.get_model('myblog', 'Post')
+    Comentario = apps.get_model('myblog', 'Comentario')
+    
+    # Crear los grupos
+    editor_group, created = Group.objects.get_or_create(name='Colaborador')
+    comentarista_group, created = Group.objects.get_or_create(name='Usuario')
+    
+    # Permisos de editor
+    content_type_post = ContentType.objects.get_for_model(Post)
+    post_permissions = Permission.objects.filter(content_type=content_type_post)
+    editor_group.permissions.set(post_permissions)  # Dar todos los permisos de Post al editor
+    
+    # Permisos de comentarista
+    content_type_comentario = ContentType.objects.get_for_model(Comentario)
+    comentar_permissions = Permission.objects.filter(content_type=content_type_comentario)
+    comentarista_group.permissions.set(comentar_permissions)  # Solo permisos de comentarios
+
+    print("Roles creados y permisos asignados correctamente")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Registro de modelos
 admin.site.register(Categoria, CategoriaAdmin)

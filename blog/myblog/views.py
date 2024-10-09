@@ -6,16 +6,26 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.shortcuts import render
 from django.core.paginator import Paginator
-
 from .models import Post, Comentario
 from django.utils import timezone
 from django.http.response import Http404 # type: ignore
 # Create your views here.
 
 
-def index(request):
+"""def inicio(request):
+    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})"""
+
+
+"""def inicio(request):
     ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
     return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
+"""
+
+def inicio(request):
+    posts = Post.objects.all().order_by('-fecha_publicacion')  # Cambia aquí si necesitas limitar el número de posts
+    return render(request, 'inicio.html', {'posts': posts})
+
 
 def lista_posts(request):
     posts = Post.objects.all().order_by('fecha_publicacion')
@@ -27,6 +37,8 @@ def contactos(request):
 def acerca_de(request):
     return render(request, 'acerca_de.html')
 
+def perfil_usuario(request):
+    return render(request, 'perfil_usuario.html')
 
 def postdetalle(request, id):
     try:
@@ -52,7 +64,7 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-## 02/10
+## 02/10  
 """
 def crear_evento(request):
     if request.method == 'POST':
