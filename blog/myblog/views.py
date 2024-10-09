@@ -9,6 +9,8 @@ from django.core.paginator import Paginator
 from .models import Post, Comentario
 from django.utils import timezone
 from django.http.response import Http404 # type: ignore
+from django.shortcuts import get_object_or_404
+from .forms import crearusuario, ComentarioForm
 # Create your views here.
 
 
@@ -23,13 +25,68 @@ from django.http.response import Http404 # type: ignore
 """
 
 def inicio(request):
-    posts = Post.objects.all().order_by('-fecha_publicacion')  # Cambia aquí si necesitas limitar el número de posts
-    return render(request, 'inicio.html', {'posts': posts})
-
+    ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:3]  # Cambia si necesitas limitar e numero de posts
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
 
 def lista_posts(request):
     posts = Post.objects.all().order_by('fecha_publicacion')
     return render(request, 'posts.html', {'posts': posts})
+
+"""def postdetalle(request, id):
+    #try:
+    data = Post.objects.get(id=id) # Obtiene el post
+    #comentarios = Comentario.objects.filter(post=data, aprobado=True) # Filtra los comentarios para que aparezcan solo los que han sido aprobados
+    comentarios = Comentario.objects.filter(post=data)
+    #except Post.DoesNotExist:
+    #    raise Http404('No existe el post') # Maneja el error de post no encontrado
+    
+    #context = {'post': data, 'comentarios': comentarios}
+    context = {'post': data,'comentarios': comentarios} # Crea un diccionario con los datos
+    return render(request, 'post_detalle.html', context) # Renderiza la plantilla
+
+"""
+
+
+"""def postdetalle(request, id):
+    # Utiliza get_object_or_404 para simplificar el manejo de errores
+    post = get_object_or_404(Post, id=id)  # Obtiene el post o devuelve un 404 si no existe
+    comentarios = Comentario.objects.filter(post=post)  # Filtra los comentarios aprobados
+
+    # Crea un diccionario con los datos
+    context = {
+        'post': post,
+        'comentarios': comentarios,
+    }
+    
+    return render(request, 'post_detalle.html', context)  # Renderiza la plantilla
+"""
+
+def post_detalle(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comentarios = post.comentarios.all()
+    
+    if request.method == 'POST':
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.post = post
+            comentario.autor_comentario = request.user  # O el valor correspondiente
+            comentario.save()
+            return redirect('post_detalle', post_id=post.id)
+    else:
+        form = ComentarioForm()
+    
+    return render(request, 'post_detalle.html', {
+        'post': post,
+        'comentarios': comentarios,
+        'form': form,
+    })
+
+
+
+
+
+
 
 def contactos(request):
     return render(request, 'contacto.html')
@@ -40,18 +97,34 @@ def acerca_de(request):
 def perfil_usuario(request):
     return render(request, 'perfil_usuario.html')
 
-def postdetalle(request, id):
-    try:
-        data = Post.objects.get(id=id)
-        comentarios = Comentario.objects.filter(post=data, aprobado=True)
-    except Post.DoesNotExist:
-        raise Http404('No existe el post')
-    
-    context = {'post': data, 'comentarios': comentarios}
-    return render(request, 'post_detalle.html', context)
 
+
+##version 4
 
 def signup(request):
+    if request.method == 'POST':
+        form = crearusuario(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('inicio')  # Redirige al inicio despuess de registrarse
+    else:
+        form = crearusuario()
+    
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+"""def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -63,7 +136,7 @@ def signup(request):
     
     return render(request, 'registration/signup.html', {'form': form})
 
-
+"""
 ## 02/10  
 """
 def crear_evento(request):

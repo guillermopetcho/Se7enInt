@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from myblog.views import inicio, lista_posts, postdetalle, acerca_de, contactos
+from myblog.views import inicio, lista_posts, post_detalle, acerca_de, contactos
 from myblog import views
 
 urlpatterns = [
@@ -29,10 +29,11 @@ urlpatterns = [
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
     path("posts/", lista_posts, name="listar_posts"),  # Ruta para listar posts
-    path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),  # Ruta para detalles de un post
+    #path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),  # Ruta para detalles de un post
+    path('post/<int:post_id>/', post_detalle, name='post_detalle'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
     path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
-    path('signup/', views.signup, name='signup'),  # Ruta para registro
+    path('signup/', views.signup, name='signup'),# Ruta para registro
     path('perfil_usuario/', views.perfil_usuario, name='perfil_usuario'),  # Ruta para perfil
 ]
 

@@ -6,11 +6,11 @@
     <div class="post">
         {% for post in ultimosposts %}
         <article class="post">
-            <h3><a href="{% url 'postdetalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
+            <h3><a href="{% url 'post_detalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
             <p>Contenido: {{ post.resumen }}</p>
             <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
             <p>Autor: {{ post.autor }}</p>
-            <a href="{% url 'postdetalle' post.id %}">Leer más</a>
+            <a href="{% url 'post_detalle' post.id %}">Leer más</a>
         </article>
         {% empty %}
             <p>No hay posts disponibles.</p>  <!-- Mensaje si no hay posts -->
