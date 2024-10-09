@@ -249,6 +249,14 @@
             <li><a href="#">Matemáticas</a></li>
             <li><a href="#">Biología</a></li>
         </ul>
+        {% if user.is_authenticated and es_colaborador %}
+            <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+        {% endif %}
+
+        {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+        {% endif %}
+
     </aside>
 </main>
 

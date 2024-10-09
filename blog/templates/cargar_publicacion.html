@@ -1,113 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Crear Publicación - Mi Blog</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav {
-            background-color: #444;
-            padding: 15px;
-            text-align: center;
-        }
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, textarea, select {
-            margin-bottom: 20px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        textarea {
-            resize: vertical;
-        }
-        input[type="submit"] {
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #555;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<header>
-    <h1>Mi Blog</h1>
-    <p>Crea una nueva publicación</p>
-</header>
+{% load static %}
+{% block content %}
+    <h2>Crear un nuevo post</h2>
 
-<nav>
-    <a href="index.html">Inicio</a>
-    <a href="#">Crear Publicación</a>
-</nav>
-
-<div class="container">
-    <h2>Crear Nueva Publicación</h2>
-    <form action="/crear_publicacion" method="POST">
-        <label for="titulo">Título de la publicación:</label>
-        <input type="text" id="titulo" name="titulo" required>
-
-        <label for="contenido">Contenido de la publicación:</label>
-        <textarea id="contenido" name="contenido" rows="10" required></textarea>
-
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" name="categoria" required>
-            <option value="">Selecciona una categoría</option>
-            <option value="tecnologia">Tecnología</option>
-            <option value="ciencia">Ciencia</option>
-            <option value="programacion">Programación</option>
-            <option value="opinion">Opinión</option>
-        </select>
-
-        <label for="autor">Autor:</label>
-        <input type="text" id="autor" name="autor" required>
-
-        <input type="submit" value="Crear Publicación">
+    <form method="post">
+        <p>{{ username.autor }}</p>
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Muestra los campos del formulario -->
+        <button type="submit">Publicar</button>
     </form>
-</div>
 
-</body>
-</html>
+{% endblock %}

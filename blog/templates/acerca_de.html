@@ -7,48 +7,17 @@
 <div class="container_acerca_de">
     <h2 class="h2_acerca_de">Nuestro Equipo de Administradores</h2>
     <div class="profile-grid">
-        <!-- Administrador 1 -->
+        {% for admin in administradores %}
         <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 1">
-            <h3><a href="{% url 'perfil_usuario' %}">Guillermo Petcho</a></h3>
-            <p>Correo: guillermo@example.com</p>
-            <p>Provincia: Buenos Aires</p>
+            <h3><a href="{% url 'perfil_usuario' admin.id %}">{{ admin.username }}</a></h3>
+            <p>Correo: {{ admin.email }}</p>
+            <p>Nombre: {{ admin.first_name }}</p>  <!-- Si tienes un modelo de perfil relacionado -->
+            <p>Apellido: {{ admin.last_name }}</p> 
         </div>
-        <!-- Administrador 2 -->
-        <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 2">
-            <h3>María González</h3>
-            <p>Correo: maria@example.com</p>
-            <p>Provincia: Córdoba</p>
-        </div>
-        <!-- Administrador 3 -->
-        <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 3">
-            <h3>Juan Pérez</h3>
-            <p>Correo: juan@example.com</p>
-            <p>Provincia: Mendoza</p>
-        </div>
-        <!-- Administrador 4 -->
-        <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 4">
-            <h3>Ana López</h3>
-            <p>Correo: ana@example.com</p>
-            <p>Provincia: Santa Fe</p>
-        </div>
-        <!-- Administrador 5 -->
-        <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 5">
-            <h3>Carlos García</h3>
-            <p>Correo: carlos@example.com</p>
-            <p>Provincia: Salta</p>
-        </div>
-        <!-- Administrador 6 -->
-        <div class="profile-card">
-            <img src="files/imagen-perfil.png" alt="Admin 6">
-            <h3>Sofía Díaz</h3>
-            <p>Correo: sofia@example.com</p>
-            <p>Provincia: Chaco</p>
-        </div>
+        {% empty %}
+        <p>No hay administradores registrados.</p>
+        {% endfor %}
     </div>
 </div>
+
 {% endblock %}

@@ -1,28 +1,19 @@
-#from django.http import HttpResponse
-#from django.views import View
 
-from django.shortcuts import render, redirect
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
-from django.shortcuts import render
 from django.core.paginator import Paginator
-from .models import Post, Comentario
 from django.utils import timezone
 from django.http.response import Http404 # type: ignore
-from django.shortcuts import get_object_or_404
+from .models import Post, Comentario
 from .forms import crearusuario, ComentarioForm
+from django.shortcuts import render, redirect ,get_object_or_404
+from .forms import PostForm
 # Create your views here.
 
 
-"""def inicio(request):
-    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
-    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})"""
-
-
-"""def inicio(request):
-    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
-    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
-"""
 
 def inicio(request):
     ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:3]  # Cambia si necesitas limitar e numero de posts
@@ -32,6 +23,114 @@ def lista_posts(request):
     posts = Post.objects.all().order_by('fecha_publicacion')
     return render(request, 'posts.html', {'posts': posts})
 
+
+def post_detalle(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comentarios = post.comentarios.all()
+
+    # Verifica si el usuario está autenticado
+    usuario_logeado = request.user.is_authenticated
+
+    if request.method == 'POST': # hacer un POST 
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.post = post
+            comentario.autor_comentario = request.user  # O el valor correspondiente
+            comentario.save()
+            return redirect('post_detalle', post_id=post.id)
+    else:
+        form = ComentarioForm()
+    
+    return render(request, 'post_detalle.html', {
+        'post': post,
+        'comentarios': comentarios,
+        'form': form,
+        'usuario_logeado': usuario_logeado,
+        
+    })
+
+
+def agregar_comentario(request, post_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        contenido = request.POST.get('contenido')
+        post = get_object_or_404(Post, id=post_id)
+        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
+        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la página del post
+
+    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST válido
+
+
+def contactos(request):
+    return render(request, 'contacto.html')
+
+
+def perfil_usuario(request, user_id):  # Asegúrate de que el argumento esté aquí
+    usuario = get_object_or_404(User, id=user_id)
+    return render(request, 'perfil_usuario.html', {'usuario': usuario})
+
+
+##version 4
+
+def signup(request):
+    if request.method == 'POST':
+        form = crearusuario(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('inicio')  # Redirige al inicio despuess de registrarse
+    else:
+        form = crearusuario()
+    
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+# views.py
+
+#def mostrar_administradores(request):
+
+def acerca_de(request):
+    administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
+    return render(request, 'acerca_de.html', {'administradores': administradores})
+
+
+
+
+@login_required
+def crear_post(request):
+    # Verifica si el usuario es colaborador o administrador
+    es_colaborador = request.user.groups.filter(name='colaborador').exists()
+    es_administrador = request.user.is_staff
+    
+    if es_colaborador or es_administrador:
+        if request.method == 'POST':
+            form = PostForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.autor = request.user  # Asigna al usuario autenticado como el autor
+                post.save()
+                return redirect('lista_posts')  # Redirige a la lista de posts después de guardar
+        else:
+            form = PostForm()
+
+        return render(request, 'cargar_publicacion.html', {'form': form})
+    
+    return render(request, 'inicio.html')
+
+
+
+
+
+### version 5
+"""def inicio(request):
+    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})"""
+
+
+"""def inicio(request):
+    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:3]
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
+"""
 """def postdetalle(request, id):
     #try:
     data = Post.objects.get(id=id) # Obtiene el post
@@ -60,68 +159,7 @@ def lista_posts(request):
     
     return render(request, 'post_detalle.html', context)  # Renderiza la plantilla
 """
-
-def post_detalle(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    comentarios = post.comentarios.all()
-    
-    if request.method == 'POST':
-        form = ComentarioForm(request.POST)
-        if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.post = post
-            comentario.autor_comentario = request.user  # O el valor correspondiente
-            comentario.save()
-            return redirect('post_detalle', post_id=post.id)
-    else:
-        form = ComentarioForm()
-    
-    return render(request, 'post_detalle.html', {
-        'post': post,
-        'comentarios': comentarios,
-        'form': form,
-    })
-
-
-
-
-
-
-
-def contactos(request):
-    return render(request, 'contacto.html')
-
-def acerca_de(request):
-    return render(request, 'acerca_de.html')
-
-def perfil_usuario(request):
-    return render(request, 'perfil_usuario.html')
-
-
-
-##version 4
-
-def signup(request):
-    if request.method == 'POST':
-        form = crearusuario(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('inicio')  # Redirige al inicio despuess de registrarse
-    else:
-        form = crearusuario()
-    
-    return render(request, 'registration/signup.html', {'form': form})
-
-
-
-
-
-
-
-
-
-
+####
 
 
 """def signup(request):

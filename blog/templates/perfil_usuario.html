@@ -3,31 +3,16 @@
 {% load static %}
 
 {% block content %}
+<section>
 
-<div class="container">
-    <h2>Información del Perfil</h2>
-    <div class="profile-info">
-        <div>
-            <label>Nombre:</label> 
-            <span id="nombre">Guillermo Petcho</span> <!-- Aquí iría el nombre del usuario -->
-        </div>
-        <div>
-            <label>Edad:</label> 
-            <span id="edad">30</span> <!-- Edad del usuario -->
-        </div>
-        <div>
-            <label>Email:</label> 
-            <span id="email">guillermo@example.com</span> <!-- Correo del usuario -->
-        </div>
-        <div>
-            <label>Provincia:</label> 
-            <span id="provincia">Buenos Aires</span> <!-- Provincia seleccionada -->
-        </div>
-        <div>
-            <label>Ciudad:</label> 
-            <span id="ciudad">La Plata</span> <!-- Ciudad ingresada -->
-        </div>
+    <div class="profile-card">
+        <h3>{{ usuario.username }}</h3>
+        <p>Correo: {{ usuario.email }}</p>
+        <p>Nombre: {{ usuario.first_name }}</p>
+        <p>Apellidos: {{ usuario.last_name }}</p>
     </div>
-    <a href="/editar_perfil" class="btn-edit">Editar Perfil</a> <!-- Botón para editar perfil -->
-</div>
+    <div >
+
+    </div>
+</section>
 {% endblock %}

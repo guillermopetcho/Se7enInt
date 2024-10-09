@@ -46,3 +46,6 @@ class Comentario(models.Model):
     def aprobar_comentario(self):
         self.aprobado = True
         self.save()
+
+    def __str__(self):
+        return f'Comentario de {self.autor_comentario} en {self.post}'

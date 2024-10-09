@@ -21,9 +21,15 @@
 </ul>
 
 <h3>Agregar un comentario:</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Enviar</button>
+    {% if usuario_logeado %}
+        <h3>Deja un comentario</h3>
+        <form method="post" action="{% url 'agregar_comentario' post.id %}"> 
+            {% csrf_token %}
+            <textarea name="cuerpo_comentario" required></textarea>
+            <button type="submit">Comentar</button>
+        </form>
+    {% else %}
+        <p>Inicia sesión para poder comentar.</p>
+    {% endif %}
 </form>
 {% endblock %}

@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from myblog.views import inicio, lista_posts, post_detalle, acerca_de, contactos
+from myblog.views import inicio, lista_posts, post_detalle, acerca_de, contactos, perfil_usuario,agregar_comentario, crear_post
 from myblog import views
 
 urlpatterns = [
@@ -34,7 +34,9 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
     path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     path('signup/', views.signup, name='signup'),# Ruta para registro
-    path('perfil_usuario/', views.perfil_usuario, name='perfil_usuario'),  # Ruta para perfil
+    path('perfil_usuario/<int:user_id>/', perfil_usuario , name='perfil_usuario'),
+    path('post/<int:post_id>/comentario/', agregar_comentario, name='agregar_comentario'),
+    path('crear_post/', crear_post, name='cargar_publicacion'),
 ]
 
 

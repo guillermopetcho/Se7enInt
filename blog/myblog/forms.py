@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Comentario
+from .models import Comentario, Post
 
 class crearusuario(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, help_text='Requerido')
@@ -17,3 +17,11 @@ class ComentarioForm(forms.ModelForm):
     class Meta:
         model = Comentario
         fields = ['cuerpo_comentario']
+
+# forms.py
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['autor', 'titulo', 'resumen', 'contenido', 'imagen', 'categorias', 'fecha_publicacion']
+    
