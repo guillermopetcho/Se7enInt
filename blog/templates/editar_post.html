@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <h2>Editar Post: {{ post.titulo }}</h2>
+        
+        <!-- Formulario de edición del post -->
+        <form method="post" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Muestra los campos del formulario de manera estructurada -->
+
+            <!-- Botón para guardar cambios -->
+            <button type="submit" class="btn btn-success">Guardar cambios</button>
+
+            <!-- Botón para cancelar la edición, redirige de vuelta a la vista de detalle del post -->
+            <a href="{% url 'post_detalle' post.id %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

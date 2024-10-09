@@ -20,8 +20,12 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from myblog.views import inicio, lista_posts, post_detalle, acerca_de, contactos, perfil_usuario,agregar_comentario, crear_post
+from myblog.views import *
 from myblog import views
+
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para el panel de administración
@@ -37,7 +41,16 @@ urlpatterns = [
     path('perfil_usuario/<int:user_id>/', perfil_usuario , name='perfil_usuario'),
     path('post/<int:post_id>/comentario/', agregar_comentario, name='agregar_comentario'),
     path('crear_post/', crear_post, name='cargar_publicacion'),
+    path('post/<int:id>/', post_detalle, name='post_detalle'),
+    path('post/<int:id>/editar/', editar_post, name='editar_post'),
+    path('comentario/<int:comentario_id>/eliminar/', eliminar_comentario, name='eliminar_comentario'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
 
 
 

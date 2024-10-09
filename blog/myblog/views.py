@@ -1,6 +1,4 @@
-
-
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
@@ -13,10 +11,11 @@ from django.shortcuts import render, redirect ,get_object_or_404
 from .forms import PostForm
 # Create your views here.
 
-
+def es_colaborador_o_admin(user):
+    return user.groups.filter(name='Colaboradores').exists() or user.is_staff
 
 def inicio(request):
-    ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:3]  # Cambia si necesitas limitar e numero de posts
+    ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Cambia si necesitas limitar e numero de posts
     return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
 
 def lista_posts(request):
@@ -25,30 +24,50 @@ def lista_posts(request):
 
 
 def post_detalle(request, post_id):
+    global es_colaborador, es_administrador
     post = get_object_or_404(Post, id=post_id)
     comentarios = post.comentarios.all()
-
-    # Verifica si el usuario está autenticado
+    es_colaborador = request.user.groups.filter(name='Colaborador').exists()
+    es_administrador = request.user.is_staff
+    
+        # Verifica si el usuario está autenticado
     usuario_logeado = request.user.is_authenticated
 
-    if request.method == 'POST': # hacer un POST 
-        form = ComentarioForm(request.POST)
-        if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.post = post
-            comentario.autor_comentario = request.user  # O el valor correspondiente
-            comentario.save()
-            return redirect('post_detalle', post_id=post.id)
+    # Identificar si se está editando un comentario
+    comentario_id = request.GET.get('edit_comentario', None)
+    comentario_a_editar = None
+    if comentario_id:
+        comentario_a_editar = get_object_or_404(Comentario, id=comentario_id)
+
+    if request.method == 'POST':
+        if 'editar_comentario' in request.POST:
+            form = ComentarioForm(request.POST, instance=comentario_a_editar)
+            if form.is_valid():
+                form.save()
+                return redirect('post_detalle', post_id=post.id)
+        else:
+            # Manejar otros formularios (por ejemplo, añadir un nuevo comentario)
+            form = ComentarioForm(request.POST)
+            if form.is_valid():
+                nuevo_comentario = form.save(commit=False)
+                nuevo_comentario.post = post
+                nuevo_comentario.autor_comentario = request.user
+                nuevo_comentario.save()
+                return redirect('post_detalle', post_id=post.id)
     else:
         form = ComentarioForm()
-    
-    return render(request, 'post_detalle.html', {
+
+    context = {
         'post': post,
         'comentarios': comentarios,
         'form': form,
+        'comentario_a_editar': comentario_a_editar,
         'usuario_logeado': usuario_logeado,
-        
-    })
+        'colaborador': es_colaborador,
+        'administrador': es_administrador,
+    }
+    return render(request, 'post_detalle.html', context)
+
 
 
 def agregar_comentario(request, post_id):
@@ -99,9 +118,8 @@ def acerca_de(request):
 @login_required
 def crear_post(request):
     # Verifica si el usuario es colaborador o administrador
-    es_colaborador = request.user.groups.filter(name='colaborador').exists()
+    es_colaborador = request.user.groups.filter(name='Colaborador').exists()
     es_administrador = request.user.is_staff
-    
     if es_colaborador or es_administrador:
         if request.method == 'POST':
             form = PostForm(request.POST)
@@ -109,13 +127,99 @@ def crear_post(request):
                 post = form.save(commit=False)
                 post.autor = request.user  # Asigna al usuario autenticado como el autor
                 post.save()
-                return redirect('lista_posts')  # Redirige a la lista de posts después de guardar
+                return redirect('inicio')  # Redirige a la lista de posts después de guardar
         else:
             form = PostForm()
 
         return render(request, 'cargar_publicacion.html', {'form': form})
     
     return render(request, 'inicio.html')
+
+
+@login_required
+def editar_post(request, id):
+    post = get_object_or_404(Post, id=id)
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)  # Asegúrate de incluir request.FILES
+        if form.is_valid():
+            form.save()
+            return redirect('post_detalle', id=post.id)
+    else:
+        form = PostForm(instance=post)
+
+    return render(request, 'editar_post.html', {'form': form, 'post': post})
+
+"""def editar_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        form = PostForm(request.POST,request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detalle', id=post.id)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'editar_post.html', {
+        'form': form,
+        'post': post,  # Pasamos el post al contexto
+    })
+
+"""
+@login_required
+def eliminar_comentario(request, comentario_id):
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+    if request.user == comentario.autor_comentario or request.user.is_staff or request.es_colaborador:  # Solo el autor o admin pueden eliminar
+        comentario.delete()
+    return redirect('post_detalle', id=comentario.post.id)
+
+@login_required
+def editar_comentario(request, id):
+    comentario = get_object_or_404(Comentario, id=id)
+    if request.method == 'POST':
+        form = ComentarioForm(request.POST, instance=comentario)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detalle', id=comentario.post.id)
+    else:
+        form = ComentarioForm(instance=comentario)
+    
+    return render(request, 'editar_comentario.html', {'form': form, 'comentario': comentario})
+
+
+
+"""
+## version 6
+def post_detalle(request, post_id):
+    global es_colaborador, es_administrador
+    post = get_object_or_404(Post, id=post_id)
+    comentarios = post.comentarios.all()
+    es_colaborador = request.user.groups.filter(name='Colaborador').exists()
+    es_administrador = request.user.is_staff
+    
+
+    # Verifica si el usuario está autenticado
+    usuario_logeado = request.user.is_authenticated
+
+    if request.method == 'POST': # hacer un POST 
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.post = post
+            comentario.autor_comentario = request.user  # O el valor correspondiente
+            comentario.save()
+            return redirect('post_detalle', post_id=post.id)
+    else:
+        form = ComentarioForm()
+    
+    return render(request, 'post_detalle.html', {
+        'post': post,
+        'comentarios': comentarios,
+        'form': form,
+        'usuario_logeado': usuario_logeado,
+        'colaborador': es_colaborador,
+        'administrador': es_administrador,
+    })
+"""
 
 
 

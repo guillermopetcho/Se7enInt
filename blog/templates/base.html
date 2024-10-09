@@ -49,6 +49,9 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: calc(70% - 10px);
         }
+        .imagen{
+            width: 100%;
+        }
         .sidebar {
             background-color: #eee;
             padding: 10px;
@@ -249,14 +252,13 @@
             <li><a href="#">Matemáticas</a></li>
             <li><a href="#">Biología</a></li>
         </ul>
-        {% if user.is_authenticated and es_colaborador %}
-            <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+        
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+            {% endif %}
         {% endif %}
-
-        {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
-        {% endif %}
-
+        
     </aside>
 </main>
 

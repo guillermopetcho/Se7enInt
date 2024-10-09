@@ -3,33 +3,61 @@
 
 {% block content %}
 <h1>{{ post.titulo }}</h1>
+{% if colaborador or administrador %}
+    <a href="{% url 'editar_post' post.id %}" class="btn btn-primary">Editar Post</a>
+{% endif %}
 <p><strong>Autor:</strong> {{ post.autor.username }}</p>
 <p>{{ post.contenido }}</p>
 <p><em>Publicado el {{ post.fecha_publicacion }}</em></p>
+<div>
+    <h2>Comentarios:</h2>
+    <ul>
+        {% for comentario in comentarios %}
+            <li>
+                <strong>{{ comentario.autor_comentario.username }}</strong> dice:
+                <p>{{ comentario.cuerpo_comentario }}</p>
+                <em>Publicado el {{ comentario.fecha_creacion }}</em>
 
-<h2>Comentarios:</h2>
-<ul>
-    {% for comentario in comentarios %}
-        <li>
-            <strong>{{ comentario.autor_comentario.username }}</strong> dice:
-            <p>{{ comentario.cuerpo_comentario }}</p>
-            <em>Publicado el {{ comentario.fecha_creacion }}</em>
-        </li>
-    {% empty %}
-        <li>No hay comentarios aún.</li>
-    {% endfor %}
-</ul>
+                {% if es_colaborador or user.is_staff %}
+                <a href="?edit_comentario={{ comentario.id }}" class="btn btn-warning">Editar</a>
+                    <form method="POST" action="{% url 'eliminar_comentario' comentario.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <a href="{% url 'eliminar_comentario' comentario.id %}" class="btn btn-danger">Eliminar comentario</a>
+                    </form>
+                {% endif %}
+                
+            </li>
+        {% empty %}
+            <li>No hay comentarios aún.</li>
+        {% endfor %}
+    </ul>
 
-<h3>Agregar un comentario:</h3>
-    {% if usuario_logeado %}
-        <h3>Deja un comentario</h3>
-        <form method="post" action="{% url 'agregar_comentario' post.id %}"> 
-            {% csrf_token %}
-            <textarea name="cuerpo_comentario" required></textarea>
-            <button type="submit">Comentar</button>
-        </form>
-    {% else %}
-        <p>Inicia sesión para poder comentar.</p>
-    {% endif %}
+
+
+
+    <h3>Agregar un comentario:</h3>
+        {% if usuario_logeado  %}
+            <h3>Deja un comentario</h3>
+            <form method="post" action="{% url 'agregar_comentario' post.id %}"> 
+                {% csrf_token %}
+                <textarea name="contenido" required></textarea>
+                <button type="submit">Comentar</button>
+            </form>
+        {% else %}
+            <p>Inicia sesión para poder comentar.</p>
+        {% endif %}
+
+
+
+
+        {% if comentario_a_editar %}
+            <h3>Editando comentario:</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" name="editar_comentario" class="btn btn-primary">Guardar cambios</button>
+            </form>
+        {% endif %}
+</div>
 </form>
 {% endblock %}
