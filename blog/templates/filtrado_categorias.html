@@ -5,17 +5,12 @@
 
 <h2>Posts en la categoría: {{ categoria.nombre }}</h2>
 <ul>
-    {% if posts %}
-        {% for post in posts %}
-            <li>
-                <a href="{% url 'post_detalle' post.id %}">
-                    {{ post.titulo }}
-                </a>
-            </li>
-        {% endfor %}
-    {% else %}
-        <li>No hay posts en esta categoría.</li>
-    {% endif %}
+    {% for post in posts %}
+        <li>
+            <h3>{{ post.titulo }}</h3>
+            <p>{{ post.contenido }}</p>
+            <a href="{% url 'post_detalle' post.id %}">Leer más</a>
+        </li>
+    {% endfor %}
 </ul>
-
 {% endblock %}

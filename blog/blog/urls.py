@@ -29,19 +29,23 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para el panel de administración
-    path("", inicio, name="inicio"),  # Ruta para la vista de inicio
-    path('', views.listar_posts, name='listar_posts'),  # Ruta principal para listar posts    #path('posts/', listar_posts, name='listar_posts'),
+    path("inicio/", listar_posts, name="inicio"),  # Ruta para la vista de inicio
+    path('', listar_posts, name='listar_posts'),  # Ruta principal para listar posts    #path('posts/', listar_posts, name='listar_posts'),
     
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
-    path('categoria/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
-    path('categoria/<int:id>/', views.filtrar_por_categoria, name='filtrar_por_categoria'),
+    #path('categoria/<int:id>/', views.filtrar_por_categoria, name='filtrar_por_categoria'),
     
+    
+    
+    path('categoria/<int:categoria_id>/', listar_posts_por_categoria, name='listar_posts_por_categoria'),
+
     path('post/<int:post_id>/comentario/', agregar_comentario, name='agregar_comentario'),
     path('post/<int:post_id>/', post_detalle, name='post_detalle'),
     path('post/<int:id>/', post_detalle, name='post_detalle'),
     path('post/<int:id>/editar/', editar_post, name='editar_post'),
-    
+    path('posts/', listar_posts, name='listar_posts'),
+
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
     path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     path('signup/', views.signup, name='signup'),# Ruta para registro

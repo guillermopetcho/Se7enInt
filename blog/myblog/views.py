@@ -15,20 +15,16 @@ from .forms import PostForm
 ### definicion de vistas ###
 
 
-def inicio(request):
-    ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Cambia si necesitas limitar e numero de posts
-    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
-
 def contactos(request):
-    return render(request, 'contacto.html')
+    return render(request, 'contacto.html', {'mostrar_categorias': False})
 
 def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
-    return render(request, 'acerca_de.html', {'administradores': administradores})
+    return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False})
 
 def perfil_usuario(request, user_id):  
     usuario = get_object_or_404(User, id=user_id)
-    return render(request, 'perfil_usuario.html', {'usuario': usuario})
+    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False})
 
 ### decorador para verificar si el usuario es colaborador o administrador ###
 def es_colaborador_o_admin(user):
@@ -38,28 +34,34 @@ def es_colaborador_o_admin(user):
 
 def listar_posts(request):
     posts = Post.objects.all()  # Obtén todos los posts
-    return render(request, 'base.html', {'posts': posts})
+    categorias = Categoria.objects.all()  # Obtén todas las categorías
+    ultimosposts = Post.objects.all().order_by('fecha_publicacion')  # Cambia si necesitas limitar e numero de posts
+
+    # Filtrar posts si hay un parámetro de categoría en la URL
+    categoria_id = request.GET.get('categoria')
+    if categoria_id:
+        posts = posts.filter(categorias__id=categoria_id)
+
+    return render(request, 'inicio.html', 
+                  {'ultimosposts': ultimosposts, 'categorias': categorias ,'mostrar_categorias': True  })
 
 
 def listar_categorias(request):
     categorias = Categoria.objects.all()  # Obtén todas las categorías
     posts = Post.objects.all()  # Puedes agregar esto si deseas también listar los posts
-    return render(request, 'base.html', {'categorias': categorias, 'posts': posts})
+    return render(request, 'inicio.html', {'categorias': categorias, 'posts': posts})
 
 def listar_posts_por_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
     posts = Post.objects.filter(categorias=categoria)  # Filtra los posts por la categoría seleccionada
+    categorias = Categoria.objects.all()  # Obtén todas las categorías para el aside
 
-    return render(request, 'base.html', {
+    return render(request, 'filtrado_categorias.html', {
         'posts': posts,
         'categoria': categoria,
-        'categorias': Categoria.objects.all(),  # Pasamos también las categorías para el aside
+        'categorias': categorias,  # Pasa las categorías para el aside
+        'mostrar_categorias': True
     })
-
-def filtrar_por_categoria(request, id):
-    categoria = Categoria.objects.get(id=id)
-    posts_filtrados = categoria.posts.all()  # Obtén los posts asociados a la categoría
-    return render(request, 'filtrado_categoria.html', {'categoria': categoria, 'posts': posts_filtrados})
 
 
 def post_detalle(request, post_id):

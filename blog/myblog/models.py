@@ -2,6 +2,12 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=200,unique=True)
+
+    def __str__(self):
+        return self.nombre
+
 
 ## Creamos el post que tendra el autor
 class Post(models.Model):
@@ -14,7 +20,7 @@ class Post(models.Model):
     contenido = models.TextField(max_length=50000)
     imagen = models.ImageField(null=True, blank= True,upload_to= "img/posts", help_text= "Imagen del post")
     #creamos la relacion con categorias de post a muchas categorias
-    categorias = models.ManyToManyField('Categoria', related_name="posts")
+    categorias = models.ManyToManyField(Categoria, related_name="posts")
 
     def publish(self):
         self.fecha_publicacion = timezone.now()
@@ -31,13 +37,6 @@ class Post(models.Model):
 
 
 ## creamos las categorias para filtrar los posts
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=200,unique=True)
-
-    def __str__(self):
-        return self.nombre
-
-
 
 
 ## Creamos los comentarios para los posts

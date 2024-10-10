@@ -237,6 +237,7 @@
     <section class = "container">
 
         {% block content %}
+
         {% endblock %}
 
 </ul>
@@ -247,20 +248,19 @@
         <h2>Sobre el blog</h2>
         <p>Este blog trata sobre tecnología, ciencia y otros temas interesantes. Aquí puedes encontrar reflexiones y análisis profundos.</p>
         
-        <h3>Categorías</h3>
-        <ul>
-            {% if categorias %}
-            {% for categoria in categorias %}
-                <li>
-                    <a href="{% url 'filtrar_por_categoria' categoria.id %}">
-                        {{ categoria.nombre }}
-                    </a>
-                </li>
-            {% endfor %}
-            {% else %}
-                <li>No hay categorías disponibles.</li>
-            {% endif %}
-        </ul>
+
+        {% if mostrar_categorias %}
+            <h3>Categorías</h3>
+            <ul>
+                {% for categoria in categorias %}
+                    <li>
+                        <a href="{% url 'listar_posts_por_categoria' categoria.id %}">
+                            {{ categoria.nombre }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
         {% if user.is_authenticated %}
             {% if user.is_staff %}
