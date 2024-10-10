@@ -1,20 +1,31 @@
+from django.shortcuts import render, redirect ,get_object_or_404
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
+from django.contrib import messages, admin
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import HttpResponseForbidden  # Para manejar permisos denegados
 from django.http.response import Http404 # type: ignore
-from .models import Post, Comentario, Categoria
-from .forms import crearusuario, ComentarioForm
-from django.shortcuts import render, redirect ,get_object_or_404
-from .forms import PostForm
+from .models import Post, Comentario, Categoria,MensajeContacto
+from .forms import crearusuario, ComentarioForm,PostForm
+from django.db.models import Count
+
 # Create your views here.
 
 
 ### definicion de vistas ###
+def inicio(request):
+    ultimos_posts = Post.objects.all().order_by('fecha_publicacion')[:4]
+    primeros_posts = Post.objects.all().order_by('-fecha_publicacion')[:4]
 
+    return render(request, 'inicio.html', {
+        'ultimos_posts': ultimos_posts,
+        'primeros_posts': primeros_posts,
+        'mostrar_categorias': True,
+        'mostrar_fechas': True
+    })
 
 def contactos(request):
     return render(request, 'contacto.html', {'mostrar_categorias': False, 'mostrar_fechas': False})
@@ -33,11 +44,14 @@ def es_colaborador_o_admin(user):
 
 ### definicion de funciones ###
 
+
 def listar_posts(request):
     posts = Post.objects.all()  # Obtén todos los posts
     categorias = Categoria.objects.all()  # Obtén todas las categorías
     ultimosposts = Post.objects.all().order_by('fecha_publicacion')  # Cambia si necesitas limitar e numero de posts
 
+    ultimos_mensajes = MensajeContacto.objects.order_by('-fecha_envio')[:3]
+    ## implementacion
 
     # Filtrar posts si hay un parámetro de categoría en la URL
     categoria_id = request.GET.get('categoria')
@@ -48,40 +62,66 @@ def listar_posts(request):
                   {'ultimosposts': ultimosposts, 
                    'categorias': categorias ,
                    'mostrar_categorias': True,
-                   'mostrar_fechas': True})
+                   'mostrar_fechas': True,
+                   'ultimos_mensajes': ultimos_mensajes
+                   })
 
 
 def listar_categorias(request):
     categorias = Categoria.objects.all()  # Obtén todas las categorías
     posts = Post.objects.all()  # Puedes agregar esto si deseas también listar los posts
-    return render(request, 'inicio.html', {'categorias': categorias, 'posts': posts})
+    return render(request, 'base.html', {'categorias': categorias,
+                                           'posts': posts,
+                                           'mostrar_cargas': True,
+                                           'mostrar_fechas': True})
+
 
 def listar_posts_por_categoria(request, categoria_id):
+    global categoria,categorias
     categoria = get_object_or_404(Categoria, id=categoria_id)
     posts = Post.objects.filter(categorias=categoria)  # Filtra los posts por la categoría seleccionada
     categorias = Categoria.objects.all()  # Obtén todas las categorías para el aside
 
+
     return render(request, 'filtrado_categorias.html', {
         'posts': posts,
-        'categoria': categoria,
         'categorias': categorias,  # Pasa las categorías para el aside
         'mostrar_categorias': True,
-        'mostrar_fechas': True
+        'mostrar_fechas': True,
+        'mostrar_cargas': True
     })
 
-
 def listar_posts_alfabeticamente(request):
+
+    categorias = Categoria.objects.all()  # Asegúrate de obtener las categorías
+
+
+
     orden = request.GET.get('orden', 'asc')  # Obtener el parámetro de orden de la URL
     if orden == 'desc':
         ultimosposts = Post.objects.all().order_by('-titulo')[:4]  # Ordenar de Z a A
     else:
         ultimosposts = Post.objects.all().order_by('titulo')[:4]  # Ordenar de A a Z
 
-    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts, 
+                                           'mostrar_cargas': True,
+                                           'categorias': categorias, 
+                                           'mostrar_fechas': True,
+                                           'mostrar_categorias': True})
 
-def listar_posts_fechas(request):
-    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:4]
-    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
+
+def fechas(request, tipo):
+    if tipo == 'recientes':
+        posts = Post.objects.all().order_by('-fecha_publicacion')[:4]  # Más recientes
+    elif tipo == 'antiguos':
+        posts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Más antiguos
+    else:
+        posts = Post.objects.all()  # O una lista vacía, según lo que desees
+    return render(request, 'inicio.html', {'posts': posts, 
+                                           'mostrar_cargas': True, 
+                                           'mostrar_fechas': True,
+                                           'mostrar_categorias': True})
+
 
 def post_detalle(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -126,6 +166,8 @@ def post_detalle(request, post_id):
         'usuario_logeado': usuario_logeado,
         'colaborador': es_colaborador,
         'administrador': es_administrador,
+        'mostrar_cargas': False, 
+        'mostrar_fechas': False,
     }
     return render(request, 'post_detalle.html', context)
 
@@ -200,5 +242,33 @@ def eliminar_comentario(request, comentario_id):
     if request.user == comentario.autor_comentario or request.user.is_staff:  # Solo el autor o admin pueden eliminar
         comentario.delete()
     return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
+
+@login_required
+def enviar_mensaje(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']
+        email = request.POST['email']
+        tema = request.POST['tema']
+        mensaje = request.POST['mensaje']
+        archivo = request.FILES.get('archivo')  # Para el archivo opcional
+
+        # Crear una nueva instancia del modelo
+        nuevo_mensaje = MensajeContacto(
+            nombre=nombre,
+            email=email,
+            tema=tema,
+            mensaje=mensaje,
+            archivo=archivo
+        )
+        nuevo_mensaje.save()  # Guardar en la base de datos
+
+        messages.success(request, 'Tu mensaje ha sido enviado con éxito.')
+        return redirect('inicio')  # Redirigir a la página de inicio o a una página de agradecimiento
+
+    return render(request, 'contacto.html')  # Cambia a tu template si es necesario
+
+
+#####################################################################################################
+### implementaciones apartes del informatorio ###
 
 

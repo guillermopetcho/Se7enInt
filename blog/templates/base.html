@@ -248,22 +248,24 @@
         <h2>Sobre el blog</h2>
         <p>Este blog trata sobre tecnología, ciencia y otros temas interesantes. Aquí puedes encontrar reflexiones y análisis profundos.</p>
         
-
         {% if mostrar_categorias %}
-            <h3>Categorías</h3>
+        <hr>
+            <h3>Categorías:</h3>
             <ul>
-                {% for categoria in categorias %}
-                    <li>
-                        <a href="{% url 'listar_posts_por_categoria' categoria.id %}">
-                            {{ categoria.nombre }}
-                        </a>
-                    </li>
-                {% endfor %}
+            {% for categoria in categorias %}
+                <li>
+                    <a href="{% url 'listar_posts_por_categoria' categoria.id %}">
+                        {{ categoria.nombre }}
+                    </a>
+                </li>
+            {% endfor %}
             </ul>
+
         {% endif %}
+
         {% if mostrar_fechas %}
         <div>
-            <h3>Ordenar por</h3>
+            <h3>Ordenar por:</h3>
             <ul>
                 <li>
                     <a href="{% url 'listar_posts_alfabeticamente' %}?orden=asc">ascendete</a>
@@ -272,19 +274,45 @@
                     <a href="{% url 'listar_posts_alfabeticamente' %}?orden=desc">descendente</a>
                 </li>
                 <li>
-                    <a href="{% url 'listar_posts_fechas' %}">más recientes</a>
+                    <a href="{% url 'listar_posts_fechas' 'recientes' %}">Más recientes</a>
+                </li>
+                <li>
+                    <a href="{% url 'listar_posts_fechas' 'antiguos' %}">Más antiguos</a>
                 </li>
             </ul>
+            {% if messages %}
+                <h3>Informacion sobre contacto:</h3>
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         </div>
+        <!-- Esta parte es para administradores -->
         {% endif %}
         {% if user.is_authenticated %}
             {% if user.is_staff %}
-                <h3>Panel de Administrador</h3>
+            <hr>
+                <h3>Panel de Administrador:</h3>
                 <a href="{% url 'admin:index' %}">Administrar</a>
-                <hr>
                 <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+                {% if ultimos_mensajes %}
+                <hr>
+                <h3>Últimos Mensajes por Tema</h3>
+                <ul>
+                    {% for mensaje in ultimos_mensajes %}
+                        <li>
+                            <strong>Tema:</strong> {{ mensaje.tema }}<br>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li>No hay mensajes disponibles.</li>
+                {% endif %}
+                </ul>
             {% endif %}
         {% endif %}
+
+
+
 
     </aside>
 </main>

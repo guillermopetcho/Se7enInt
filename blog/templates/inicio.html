@@ -4,14 +4,42 @@
 {% block content %}
 <section>
     <div class="post">
+
+        {% if posts %}
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <h3><a href="{% url 'post_detalle' post.id %}">{{ post.titulo }}</a></h3>
+                    {% if post.imagen %}
+                    <img class="imagen" src="{{ post.imagen.url }}" alt="Imagen de {{ post.titulo }}" />
+                    {% else %}
+                        <p>No hay imagen disponible.</p>
+                    {% endif %} 
+                    <p>{{ post.contenido }}</p>
+                    <p>{{ post.fecha_publicacion }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
+
         {% if listar_posts_alfabeticamente %}
 
         <ul>
             {% for post in ultimosposts %}
                 <li>{{ post.titulo }}</li>  <!-- Asumiendo que el campo del título es 'titulo' -->
             {% endfor %}
-            
+
         </ul>
+        {% elif listar_posts_fechas %}
+
+        <ul>
+            {% for post in ultimosposts %}
+                <li>{{ post.titulo }}</li>  <!-- Asumiendo que el campo del título es 'titulo' -->
+            {% endfor %}
+        </ul>
+
         {% else %}
                 {% for post in ultimosposts %}
                 <article class="post">

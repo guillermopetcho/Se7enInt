@@ -8,7 +8,6 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
-
 ## Creamos el post que tendra el autor
 class Post(models.Model):
     autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -32,14 +31,7 @@ class Post(models.Model):
     def mostrarcomentario(self):
         return self.comentarios.filter(aprobado=True)
     
-## ORM
-## creamos categoria
 
-
-## creamos las categorias para filtrar los posts
-
-
-## Creamos los comentarios para los posts
 class Comentario(models.Model):
     #relacion entre uno y muchos
     autor_comentario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -55,3 +47,19 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f'Comentario de {self.autor_comentario} en {self.post}'
+    
+
+    from django.db import models
+
+
+
+class MensajeContacto(models.Model):
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField()
+    tema = models.CharField(max_length=50)
+    mensaje = models.TextField()
+    archivo = models.FileField(upload_to='archivos/', blank=True, null=True)  # Para archivos opcionales
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nombre

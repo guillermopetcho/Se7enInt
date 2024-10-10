@@ -35,10 +35,12 @@ urlpatterns = [
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
     #path('categoria/<int:id>/', views.filtrar_por_categoria, name='filtrar_por_categoria'),
-    
-    
+    #/posts/alfabeticamente/?orden=asc
     
     path('categoria/<int:categoria_id>/', listar_posts_por_categoria, name='listar_posts_por_categoria'),
+    path('posts/alfabeticamente/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
+    path('categoria/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
+
 
     path('post/<int:post_id>/comentario/', agregar_comentario, name='agregar_comentario'),
     path('post/<int:post_id>/', post_detalle, name='post_detalle'),
@@ -46,19 +48,19 @@ urlpatterns = [
     path('post/<int:id>/editar/', editar_post, name='editar_post'),
     path('posts/', listar_posts, name='listar_posts'),
     path('posts/alfabeticamente/', views.listar_posts_alfabeticamente, name='listar_posts_alfabeticamente'),
-    path('posts/fechas/', views.listar_posts_fechas, name='listar_posts_fechas'),
-
+    path('posts/fechas/<str:tipo>/', views.fechas, name='listar_posts_fechas'),  # Captura el argumento "tipo"
+    
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
     path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     path('signup/', views.signup, name='signup'),# Ruta para registro
     
     path('perfil_usuario/<int:user_id>/', perfil_usuario , name='perfil_usuario'),
+    path('enviar_mensaje/', enviar_mensaje, name='enviar_mensaje'),
     
     path('crear_post/', crear_post, name='cargar_publicacion'),
     path('comentario/<int:comentario_id>/eliminar/', eliminar_comentario, name='eliminar_comentario'),
     path('eliminar_comentario/<int:comentario_id>/', views.eliminar_comentario, name='eliminar_comentario'),
     #path('editar_comentario/<int:id>/', views.editar_comentario, name='editar_comentario'),
-    path('categoria/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
 ]
 
 
@@ -68,45 +70,3 @@ if settings.DEBUG:
 
 
 
-
-"""
-## version de control v2 - v3
-from django.contrib.auth import views as auth_views
-from django.contrib.auth.views import LogoutView
-from django.contrib import admin
-from django.urls import path
-from myblog.views import inicio, lista_posts, postdetalle, acerca_de, contactos
-#from . import views
-from myblog import views
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", inicio, name="inicio"),
-    path("acerca_de/", acerca_de, name="acerca_de"),  # Debería tener una vista específica para "acerca_de"
-    path("contacto/", contactos, name="contacto"),    # Debería tener una vista específica para "contacto"
-    path("posts/", lista_posts, name="listar_posts"),
-    path("posts/<int:id>/detalle/", postdetalle, name="postdetalle"),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('signup/',views.signup, name='signup'),
-]
-"""
-
-"""
-##version de control v1
-from django.contrib import admin
-from django.urls import path
-from myblog.views import *
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("",index, name="inicio"),
-    path("acerca_de",index, name="acerca_de"),
-    path("contacto",index, name="contacto"),
-    path("posts",lista_posts, name="listar_posts"),
-    path("posts-detalle/<int:id>", postdetalle , name="postdetalle"),
-    #path('', home_view, name='home_view'),
-    #path('index', index, name='index'),
-
-]
-"""

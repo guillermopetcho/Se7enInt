@@ -28,3 +28,22 @@ Aparte se agrego implementaciones:
 
 
     + Pagina de Perfil de usuario
+
+
+    /Se7enInt/
+│
+├── blog/
+│   ├── manage.py
+│   ├── blog/
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   └── myblog/
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── migrations/
+│       ├── models.py
+│       ├── tests.py
+│       └── views.py
