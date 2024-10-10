@@ -239,22 +239,34 @@
         {% block content %}
         {% endblock %}
 
+</ul>
+
     </section>    
 
     <aside class="sidebar">
         <h2>Sobre el blog</h2>
         <p>Este blog trata sobre tecnología, ciencia y otros temas interesantes. Aquí puedes encontrar reflexiones y análisis profundos.</p>
         
-        <h2>Categorías</h2>
+        <h3>Categorías</h3>
         <ul>
-            <li><a href="#">Física</a></li>
-            <li><a href="#">Química</a></li>
-            <li><a href="#">Matemáticas</a></li>
-            <li><a href="#">Biología</a></li>
+            {% if categorias %}
+            {% for categoria in categorias %}
+                <li>
+                    <a href="{% url 'filtrar_por_categoria' categoria.id %}">
+                        {{ categoria.nombre }}
+                    </a>
+                </li>
+            {% endfor %}
+            {% else %}
+                <li>No hay categorías disponibles.</li>
+            {% endif %}
         </ul>
-        
+
         {% if user.is_authenticated %}
             {% if user.is_staff %}
+                <h3>Panel de Administrador</h3>
+                <a href="{% url 'admin:index' %}">Administrar</a>
+                <hr>
                 <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
             {% endif %}
         {% endif %}

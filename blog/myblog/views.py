@@ -5,22 +5,66 @@ from django.contrib.auth import login
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http.response import Http404 # type: ignore
-from .models import Post, Comentario
+from .models import Post, Comentario, Categoria
 from .forms import crearusuario, ComentarioForm
 from django.shortcuts import render, redirect ,get_object_or_404
 from .forms import PostForm
 # Create your views here.
 
-def es_colaborador_o_admin(user):
-    return user.groups.filter(name='Colaboradores').exists() or user.is_staff
+
+### definicion de vistas ###
+
 
 def inicio(request):
     ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Cambia si necesitas limitar e numero de posts
     return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
 
-def lista_posts(request):
+def contactos(request):
+    return render(request, 'contacto.html')
+
+def acerca_de(request):
+    administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
+    return render(request, 'acerca_de.html', {'administradores': administradores})
+
+def perfil_usuario(request, user_id):  
+    usuario = get_object_or_404(User, id=user_id)
+    return render(request, 'perfil_usuario.html', {'usuario': usuario})
+
+### decorador para verificar si el usuario es colaborador o administrador ###
+def es_colaborador_o_admin(user):
+    return user.groups.filter(name='Colaboradores').exists() or user.is_staff
+
+### definicion de funciones ###
+"""def lista_posts(request):
     posts = Post.objects.all().order_by('fecha_publicacion')
     return render(request, 'posts.html', {'posts': posts})
+"""
+
+
+def listar_posts(request):
+    posts = Post.objects.all()  # Obtén todos los posts
+    return render(request, 'base.html', {'posts': posts})
+
+
+def listar_categorias(request):
+    categorias = Categoria.objects.all()  # Obtén todas las categorías
+    posts = Post.objects.all()  # Puedes agregar esto si deseas también listar los posts
+    return render(request, 'base.html', {'categorias': categorias, 'posts': posts})
+
+def listar_posts_por_categoria(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    posts = Post.objects.filter(categorias=categoria)  # Filtra los posts por la categoría seleccionada
+
+    return render(request, 'base.html', {
+        'posts': posts,
+        'categoria': categoria,
+        'categorias': Categoria.objects.all(),  # Pasamos también las categorías para el aside
+    })
+
+def filtrar_por_categoria(request, id):
+    categoria = Categoria.objects.get(id=id)
+    posts_filtrados = categoria.posts.all()  # Obtén los posts asociados a la categoría
+    return render(request, 'filtrado_categoria.html', {'categoria': categoria, 'posts': posts_filtrados})
 
 
 def post_detalle(request, post_id):
@@ -30,12 +74,14 @@ def post_detalle(request, post_id):
     es_colaborador = request.user.groups.filter(name='Colaborador').exists()
     es_administrador = request.user.is_staff
     
-        # Verifica si el usuario está autenticado
+        # verifica si el usuario esta autenticado
     usuario_logeado = request.user.is_authenticated
 
-    # Identificar si se está editando un comentario
+    # identificar si se esta editando un comentario
     comentario_id = request.GET.get('edit_comentario', None)
     comentario_a_editar = None
+    ###########################################################
+
     if comentario_id:
         comentario_a_editar = get_object_or_404(Comentario, id=comentario_id)
 
@@ -70,27 +116,6 @@ def post_detalle(request, post_id):
 
 
 
-def agregar_comentario(request, post_id):
-    if request.method == 'POST' and request.user.is_authenticated:
-        contenido = request.POST.get('contenido')
-        post = get_object_or_404(Post, id=post_id)
-        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
-        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la página del post
-
-    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST válido
-
-
-def contactos(request):
-    return render(request, 'contacto.html')
-
-
-def perfil_usuario(request, user_id):  # Asegúrate de que el argumento esté aquí
-    usuario = get_object_or_404(User, id=user_id)
-    return render(request, 'perfil_usuario.html', {'usuario': usuario})
-
-
-##version 4
-
 def signup(request):
     if request.method == 'POST':
         form = crearusuario(request.POST)
@@ -103,16 +128,16 @@ def signup(request):
     
     return render(request, 'registration/signup.html', {'form': form})
 
+### con logeo ###
+@login_required
+def agregar_comentario(request, post_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        contenido = request.POST.get('contenido')
+        post = get_object_or_404(Post, id=post_id)
+        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
+        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la pag del post
 
-# views.py
-
-#def mostrar_administradores(request):
-
-def acerca_de(request):
-    administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
-    return render(request, 'acerca_de.html', {'administradores': administradores})
-
-
+    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST valido
 
 
 @login_required
@@ -135,7 +160,6 @@ def crear_post(request):
     
     return render(request, 'inicio.html')
 
-
 @login_required
 def editar_post(request, id):
     post = get_object_or_404(Post, id=id)
@@ -150,21 +174,6 @@ def editar_post(request, id):
 
     return render(request, 'editar_post.html', {'form': form, 'post': post})
 
-"""def editar_post(request, id):
-    post = get_object_or_404(Post, id=id)
-    if request.method == 'POST':
-        form = PostForm(request.POST,request.FILES, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect('post_detalle', id=post.id)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'editar_post.html', {
-        'form': form,
-        'post': post,  # Pasamos el post al contexto
-    })
-
-"""
 @login_required
 def eliminar_comentario(request, comentario_id):
     comentario = get_object_or_404(Comentario, id=comentario_id)
@@ -184,7 +193,6 @@ def editar_comentario(request, id):
         form = ComentarioForm(instance=comentario)
     
     return render(request, 'editar_comentario.html', {'form': form, 'comentario': comentario})
-
 
 
 """
@@ -221,6 +229,21 @@ def post_detalle(request, post_id):
     })
 """
 
+"""def editar_post(request, id):
+    post = get_object_or_404(Post, id=id)
+    if request.method == 'POST':
+        form = PostForm(request.POST,request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detalle', id=post.id)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'editar_post.html', {
+        'form': form,
+        'post': post,  # Pasamos el post al contexto
+    })
+
+"""
 
 
 

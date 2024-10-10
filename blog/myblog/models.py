@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.conf import settings
 
 
-# Create your models here.
+## Creamos el post que tendra el autor
 class Post(models.Model):
     autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=200)
@@ -13,6 +13,7 @@ class Post(models.Model):
     ## ORM
     contenido = models.TextField(max_length=50000)
     imagen = models.ImageField(null=True, blank= True,upload_to= "img/posts", help_text= "Imagen del post")
+    #creamos la relacion con categorias de post a muchas categorias
     categorias = models.ManyToManyField('Categoria', related_name="posts")
 
     def publish(self):
@@ -28,12 +29,18 @@ class Post(models.Model):
 ## ORM
 ## creamos categoria
 
+
+## creamos las categorias para filtrar los posts
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=200,unique=True)
 
     def __str__(self):
         return self.nombre
 
+
+
+
+## Creamos los comentarios para los posts
 class Comentario(models.Model):
     #relacion entre uno y muchos
     autor_comentario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

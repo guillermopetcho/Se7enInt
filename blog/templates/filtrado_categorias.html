@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2>Posts en la categoría: {{ categoria.nombre }}</h2>
+<ul>
+    {% if posts %}
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detalle' post.id %}">
+                    {{ post.titulo }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <li>No hay posts en esta categoría.</li>
+    {% endif %}
+</ul>
+
+{% endblock %}
