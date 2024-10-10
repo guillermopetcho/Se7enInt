@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.http import HttpResponseForbidden  # Para manejar permisos denegados
 from django.http.response import Http404 # type: ignore
 from .models import Post, Comentario, Categoria
 from .forms import crearusuario, ComentarioForm
@@ -64,32 +65,33 @@ def listar_posts_por_categoria(request, categoria_id):
     })
 
 
+
+
 def post_detalle(request, post_id):
-    global es_colaborador, es_administrador
     post = get_object_or_404(Post, id=post_id)
     comentarios = post.comentarios.all()
     es_colaborador = request.user.groups.filter(name='Colaborador').exists()
     es_administrador = request.user.is_staff
     
-        # verifica si el usuario esta autenticado
+    # verifica si el usuario esta autenticado
     usuario_logeado = request.user.is_authenticated
 
     # identificar si se esta editando un comentario
     comentario_id = request.GET.get('edit_comentario', None)
     comentario_a_editar = None
-    ###########################################################
 
     if comentario_id:
         comentario_a_editar = get_object_or_404(Comentario, id=comentario_id)
 
     if request.method == 'POST':
-        if 'editar_comentario' in request.POST:
+        # Si se está editando un comentario
+        if comentario_a_editar and comentario_a_editar.autor_comentario == request.user:
             form = ComentarioForm(request.POST, instance=comentario_a_editar)
             if form.is_valid():
                 form.save()
                 return redirect('post_detalle', post_id=post.id)
+        # Si es un nuevo comentario
         else:
-            # Manejar otros formularios (por ejemplo, añadir un nuevo comentario)
             form = ComentarioForm(request.POST)
             if form.is_valid():
                 nuevo_comentario = form.save(commit=False)
@@ -110,6 +112,7 @@ def post_detalle(request, post_id):
         'administrador': es_administrador,
     }
     return render(request, 'post_detalle.html', context)
+
 
 
 
@@ -142,13 +145,15 @@ def crear_post(request):
     # Verifica si el usuario es colaborador o administrador
     es_colaborador = request.user.groups.filter(name='Colaborador').exists()
     es_administrador = request.user.is_staff
+
     if es_colaborador or es_administrador:
         if request.method == 'POST':
             form = PostForm(request.POST, request.FILES)  # Asegúrate de incluir request.FILES aquí
             if form.is_valid():
-                post = form.save(commit=False)
+                post = form.save(commit=False) # Guarda los datos del formulario en el objeto post
                 post.autor = request.user  # Asigna al usuario autenticado como el autor
                 post.save()
+                form.save_m2m()
                 return redirect('inicio')  # Redirige a la lista de posts después de guardar
         else:
             form = PostForm()
@@ -174,13 +179,25 @@ def editar_post(request, id):
 @login_required
 def eliminar_comentario(request, comentario_id):
     comentario = get_object_or_404(Comentario, id=comentario_id)
-    if request.user == comentario.autor_comentario or request.user.is_staff or request.es_colaborador:  # Solo el autor o admin pueden eliminar
-        comentario.delete()
-    return redirect('post_detalle', id=comentario.post.id)
+    post_id = comentario.post.id  # Almacenar el ID del post antes de eliminar el comentario
 
+    if request.user == comentario.autor_comentario or request.user.is_staff:  # Solo el autor o admin pueden eliminar
+        comentario.delete()
+    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
+
+
+
+"""
+## no puedo heredar 2 veces de la misma clase
 @login_required
 def editar_comentario(request, id):
     comentario = get_object_or_404(Comentario, id=id)
+
+     # Verificar si el usuario actual es el autor del comentario
+    if request.user != comentario.autor_comentario:
+        return HttpResponseForbidden("No tienes permiso para editar este comentario.")
+
+
     if request.method == 'POST':
         form = ComentarioForm(request.POST, instance=comentario)
         if form.is_valid():
@@ -189,6 +206,8 @@ def editar_comentario(request, id):
     else:
         form = ComentarioForm(instance=comentario)
     
-    return render(request, 'editar_comentario.html', {'form': form, 'comentario': comentario})
+
+    return render(request, 'post_detalle', {'form': form, 'comentario': comentario})
 
 
+"""

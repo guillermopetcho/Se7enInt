@@ -6,11 +6,19 @@
 <h2>Posts en la categoría: {{ categoria.nombre }}</h2>
 <ul>
     {% for post in posts %}
-        <li>
-            <h3>{{ post.titulo }}</h3>
-            <p>{{ post.contenido }}</p>
-            <a href="{% url 'post_detalle' post.id %}">Leer más</a>
-        </li>
+    <article class="post">
+        <h3><a href="{% url 'post_detalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
+        {% if post.imagen %}
+           <img class="imagen" src="{{ post.imagen.url }}" alt="Imagen de {{ post.titulo }}" />
+        {% else %}
+            <p>No hay imagen disponible.</p>
+        {% endif %}
+
+        <p>Contenido: {{ post.resumen }}</p>
+        <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
+        <p>Autor: {{ post.autor }}</p>
+        <a href="{% url 'post_detalle' post.id %}">Leer más</a>
+    </article>
     {% endfor %}
 </ul>
 {% endblock %}
