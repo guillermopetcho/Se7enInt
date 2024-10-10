@@ -17,15 +17,15 @@ from .forms import PostForm
 
 
 def contactos(request):
-    return render(request, 'contacto.html', {'mostrar_categorias': False})
+    return render(request, 'contacto.html', {'mostrar_categorias': False, 'mostrar_fechas': False})
 
 def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
-    return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False})
+    return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False,'mostrar_fechas': False})
 
 def perfil_usuario(request, user_id):  
     usuario = get_object_or_404(User, id=user_id)
-    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False})
+    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False,'mostrar_fechas': False})
 
 ### decorador para verificar si el usuario es colaborador o administrador ###
 def es_colaborador_o_admin(user):
@@ -38,13 +38,17 @@ def listar_posts(request):
     categorias = Categoria.objects.all()  # Obtén todas las categorías
     ultimosposts = Post.objects.all().order_by('fecha_publicacion')  # Cambia si necesitas limitar e numero de posts
 
+
     # Filtrar posts si hay un parámetro de categoría en la URL
     categoria_id = request.GET.get('categoria')
     if categoria_id:
         posts = posts.filter(categorias__id=categoria_id)
 
     return render(request, 'inicio.html', 
-                  {'ultimosposts': ultimosposts, 'categorias': categorias ,'mostrar_categorias': True  })
+                  {'ultimosposts': ultimosposts, 
+                   'categorias': categorias ,
+                   'mostrar_categorias': True,
+                   'mostrar_fechas': True})
 
 
 def listar_categorias(request):
@@ -61,11 +65,23 @@ def listar_posts_por_categoria(request, categoria_id):
         'posts': posts,
         'categoria': categoria,
         'categorias': categorias,  # Pasa las categorías para el aside
-        'mostrar_categorias': True
+        'mostrar_categorias': True,
+        'mostrar_fechas': True
     })
 
 
+def listar_posts_alfabeticamente(request):
+    orden = request.GET.get('orden', 'asc')  # Obtener el parámetro de orden de la URL
+    if orden == 'desc':
+        ultimosposts = Post.objects.all().order_by('-titulo')[:4]  # Ordenar de Z a A
+    else:
+        ultimosposts = Post.objects.all().order_by('titulo')[:4]  # Ordenar de A a Z
 
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
+
+def listar_posts_fechas(request):
+    ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:4]
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts})
 
 def post_detalle(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -186,28 +202,3 @@ def eliminar_comentario(request, comentario_id):
     return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
 
 
-
-"""
-## no puedo heredar 2 veces de la misma clase
-@login_required
-def editar_comentario(request, id):
-    comentario = get_object_or_404(Comentario, id=id)
-
-     # Verificar si el usuario actual es el autor del comentario
-    if request.user != comentario.autor_comentario:
-        return HttpResponseForbidden("No tienes permiso para editar este comentario.")
-
-
-    if request.method == 'POST':
-        form = ComentarioForm(request.POST, instance=comentario)
-        if form.is_valid():
-            form.save()
-            return redirect('post_detalle', id=comentario.post.id)
-    else:
-        form = ComentarioForm(instance=comentario)
-    
-
-    return render(request, 'post_detalle', {'form': form, 'comentario': comentario})
-
-
-"""

@@ -261,7 +261,22 @@
                 {% endfor %}
             </ul>
         {% endif %}
-
+        {% if mostrar_fechas %}
+        <div>
+            <h3>Ordenar por</h3>
+            <ul>
+                <li>
+                    <a href="{% url 'listar_posts_alfabeticamente' %}?orden=asc">ascendete</a>
+                </li>
+                <li>
+                    <a href="{% url 'listar_posts_alfabeticamente' %}?orden=desc">descendente</a>
+                </li>
+                <li>
+                    <a href="{% url 'listar_posts_fechas' %}">más recientes</a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
         {% if user.is_authenticated %}
             {% if user.is_staff %}
                 <h3>Panel de Administrador</h3>
@@ -270,7 +285,7 @@
                 <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
             {% endif %}
         {% endif %}
-        
+
     </aside>
 </main>
 

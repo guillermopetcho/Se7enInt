@@ -45,6 +45,8 @@ urlpatterns = [
     path('post/<int:id>/', post_detalle, name='post_detalle'),
     path('post/<int:id>/editar/', editar_post, name='editar_post'),
     path('posts/', listar_posts, name='listar_posts'),
+    path('posts/alfabeticamente/', views.listar_posts_alfabeticamente, name='listar_posts_alfabeticamente'),
+    path('posts/fechas/', views.listar_posts_fechas, name='listar_posts_fechas'),
 
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
     path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
