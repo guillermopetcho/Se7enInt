@@ -147,7 +147,7 @@ def crear_post(request):
     es_administrador = request.user.is_staff
     if es_colaborador or es_administrador:
         if request.method == 'POST':
-            form = PostForm(request.POST)
+            form = PostForm(request.POST, request.FILES)  # Asegúrate de incluir request.FILES aquí
             if form.is_valid():
                 post = form.save(commit=False)
                 post.autor = request.user  # Asigna al usuario autenticado como el autor

@@ -4,11 +4,10 @@
 {% block content %}
     <h2>Crear un nuevo post</h2>
 
-    <form method="post">
-        <p>{{ username.autor }}</p>
+    <form method="POST" enctype="multipart/form-data">  <!-- Asegúrate de incluir enctype -->
         {% csrf_token %}
-        {{ form.as_p }}  <!-- Muestra los campos del formulario -->
-        <button type="submit">Publicar</button>
+        {{ form.as_p }}
+        <button type="submit">Crear Post</button>
     </form>
-
+    
 {% endblock %}
