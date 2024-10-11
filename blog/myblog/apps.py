@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
-
-class MyblogConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class MyBlogConfig(AppConfig):
     name = 'myblog'
+
+    def ready(self):
+        import myblog.signals  # Asegúrate de importar tu archivo de señales

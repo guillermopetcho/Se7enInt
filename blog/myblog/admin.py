@@ -5,9 +5,8 @@ from django.utils.safestring import mark_safe
 from django.contrib import admin
 
 ## version 2.0 
-from django.contrib import admin
-from .models import Post, Categoria, Comentario
-from django.utils.safestring import mark_safe
+
+from .models import Post, Categoria, Comentario, Profile
 
 ## version 3 privilegios de usuarios
 
@@ -24,6 +23,15 @@ from .models import MensajeContacto
 class CategoriasInline(admin.StackedInline):
     model = Post.categorias.through
     extra = 5
+
+
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'photo')  # Muestra el nombre de usuario y la foto en la lista
+    search_fields = ('user__username',)  # Permite buscar por nombre de usuario
+
+
+
 
 class PostAdmin(admin.ModelAdmin):
     inlines = [
@@ -113,5 +121,5 @@ class MensajeContactoAdmin(admin.ModelAdmin):
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comentario, ComentariosAdmin)
-
+admin.site.register(Profile, ProfileAdmin)
 

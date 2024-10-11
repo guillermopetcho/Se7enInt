@@ -1,12 +1,29 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}  <!-- Asegúrate de extender tu plantilla base -->
 
 {% load static %}
-
 {% block content %}
-<h2>Registro</h2>
-<form method="post">
+  <h2>Crear cuenta</h2>
+  
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Registrarse</button>
-</form>
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button type="submit">Registrar</button>
+  </form>
+
+  <!-- Mostrar errores del formulario -->
+  {% if form.errors %}
+    <div class="error">
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endblock %}

@@ -1,6 +1,9 @@
+from tkinter import Image
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=200,unique=True)
@@ -63,3 +66,20 @@ class MensajeContacto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    photo = models.ImageField(null=True, blank=True, upload_to="img/posts", help_text="Imagen del perfil")
+    encrypted_password = models.CharField(max_length=128, blank=True, null=True)  # Campo para almacenar la contraseña encriptada
+
+    def __str__(self):
+        return self.user.username
+
+    def save(self, *args, **kwargs):
+        if self.user.password and not self.encrypted_password:
+            self.encrypted_password = self.user.password  # Almacena la contraseña encriptada del usuario
+        super(Profile, self).save(*args, **kwargs)

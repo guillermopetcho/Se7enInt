@@ -8,8 +8,8 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import HttpResponseForbidden  # Para manejar permisos denegados
 from django.http.response import Http404 # type: ignore
-from .models import Post, Comentario, Categoria,MensajeContacto
-from .forms import crearusuario, ComentarioForm,PostForm
+from .models import Post, Comentario, Categoria,MensajeContacto, Profile
+from .forms import crearusuario, ProfileForm,PostForm,ComentarioForm
 from django.db.models import Count
 
 # Create your views here.
@@ -34,9 +34,29 @@ def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
     return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False,'mostrar_fechas': False})
 
+"""def perfil_usuario(request, user_id):  
+    usuario = get_object_or_404(User, id=user_id)
+    #profile = get_object_or_404(Profile, user=request.user)  # Obtén el perfil del usuario autenticado
+    profile = get_object_or_404(Profile, user__id=user_id)
+    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False,'mostrar_fechas': False,'profile': profile})
+
+
+
+"""
+
+
+
 def perfil_usuario(request, user_id):  
     usuario = get_object_or_404(User, id=user_id)
-    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False,'mostrar_fechas': False})
+    profile = get_object_or_404(Profile, user__id=user_id)
+    return render(request, 'perfil_usuario.html', {
+        'usuario': usuario,
+        'profile': profile,
+        'mostrar_categorias': False,
+        'mostrar_fechas': False
+    })
+
+
 
 ### decorador para verificar si el usuario es colaborador o administrador ###
 def es_colaborador_o_admin(user):
@@ -172,19 +192,50 @@ def post_detalle(request, post_id):
     return render(request, 'post_detalle.html', context)
 
 
+"""def signup(request):
+    if request.method == 'POST':
+        form = crearusuario(request.POST, request.FILES, instance=request.user.profile)  # Asegúrate de incluir request.FILES para manejar archivos
+        #form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            user = form.save()  # Crea el usuario
+            # Verifica si el perfil ya existe o lo crea si no
+            profile, created = Profile.objects.get_or_create(user=user)
+            if 'photo' in request.FILES:  # Verifica si la foto fue subida
+                profile.photo = request.FILES['photo']  # Asigna la foto al perfil
+            profile.save()  # Guarda el perfil
+            login(request, user)  # Inicia sesión con el nuevo usuario
+            return redirect('inicio')  # Redirige a la página de inicio
+    else:
+        form = crearusuario()
+    return render(request, 'registration/signup.html', {'form': form})
+"""
 
 
 def signup(request):
     if request.method == 'POST':
-        form = crearusuario(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('inicio')  # Redirige al inicio despuess de registrarse
+        user_form = crearusuario(request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES)  # Asegúrate de manejar archivos (imágenes)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            # Verifica si ya existe un perfil para el usuario
+            profile, created = Profile.objects.get_or_create(user=user)
+            
+            if created:  # Solo guarda si el perfil fue creado y no existía antes
+                profile.photo = profile_form.cleaned_data['photo']  # Asigna la imagen si fue subida
+                profile.save()  # Guarda el perfil con la foto
+            
+            messages.success(request, 'Usuario creado con éxito.')
+            login(request, user)  # Inicia sesión automáticamente después del registro
+            return redirect('inicio')
     else:
-        form = crearusuario()
-    
-    return render(request, 'registration/signup.html', {'form': form})
+        user_form = crearusuario()
+        profile_form = ProfileForm()
+
+    return render(request, 'registration/signup.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 ### con logeo ###
 @login_required
