@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect ,get_object_or_404
-from django.contrib.auth.decorators import login_required,user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
@@ -33,16 +33,6 @@ def contactos(request):
 def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
     return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False,'mostrar_fechas': False})
-
-"""def perfil_usuario(request, user_id):  
-    usuario = get_object_or_404(User, id=user_id)
-    #profile = get_object_or_404(Profile, user=request.user)  # Obtén el perfil del usuario autenticado
-    profile = get_object_or_404(Profile, user__id=user_id)
-    return render(request, 'perfil_usuario.html', {'usuario': usuario ,'mostrar_categorias': False,'mostrar_fechas': False,'profile': profile})
-
-
-
-"""
 
 
 
@@ -191,24 +181,6 @@ def post_detalle(request, post_id):
     }
     return render(request, 'post_detalle.html', context)
 
-
-"""def signup(request):
-    if request.method == 'POST':
-        form = crearusuario(request.POST, request.FILES, instance=request.user.profile)  # Asegúrate de incluir request.FILES para manejar archivos
-        #form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            user = form.save()  # Crea el usuario
-            # Verifica si el perfil ya existe o lo crea si no
-            profile, created = Profile.objects.get_or_create(user=user)
-            if 'photo' in request.FILES:  # Verifica si la foto fue subida
-                profile.photo = request.FILES['photo']  # Asigna la foto al perfil
-            profile.save()  # Guarda el perfil
-            login(request, user)  # Inicia sesión con el nuevo usuario
-            return redirect('inicio')  # Redirige a la página de inicio
-    else:
-        form = crearusuario()
-    return render(request, 'registration/signup.html', {'form': form})
-"""
 
 
 def signup(request):

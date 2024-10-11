@@ -39,11 +39,12 @@ Aparte se agrego implementaciones:
 │   │   ├── settings.py
 │   │   ├── urls.py
 │   │   └── wsgi.py
-│   └── myblog/
-│       ├── __init__.py
-│       ├── admin.py
-│       ├── apps.py
-│       ├── migrations/
-│       ├── models.py
-│       ├── tests.py
-│       └── views.py
+│   └── apps/
+│       ├──myblog/
+│           ├── __init__.py
+│           ├── admin.py
+│           ├── apps.py
+│           ├── migrations/
+│           ├── models.py
+│           ├── tests.py
+│           └── views.py

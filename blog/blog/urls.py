@@ -20,8 +20,9 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
-from myblog.views import *
-from myblog import views
+from apps.myblog.views import *
+
+from apps.myblog import views
 
 
 from django.conf import settings
