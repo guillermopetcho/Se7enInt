@@ -21,10 +21,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from apps.myblog.views import *
-
 from apps.myblog import views
-
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -35,8 +32,6 @@ urlpatterns = [
     
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
-    #path('categoria/<int:id>/', views.filtrar_por_categoria, name='filtrar_por_categoria'),
-    #/posts/alfabeticamente/?orden=asc
     
     path('categoria/<int:categoria_id>/', listar_posts_por_categoria, name='listar_posts_por_categoria'),
     path('posts/alfabeticamente/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
@@ -52,7 +47,6 @@ urlpatterns = [
     path('posts/fechas/<str:tipo>/', views.fechas, name='listar_posts_fechas'),  # Captura el argumento "tipo"
     
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
-    #path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     path('signup/', views.signup, name='signup'),# Ruta para registro
     path('logout/', cerrar_sesion, name='cerrar_sesion'),  # Ruta para cerrar sesión
 
@@ -62,6 +56,10 @@ urlpatterns = [
     path('crear_post/', crear_post, name='cargar_publicacion'),
     path('comentario/<int:comentario_id>/eliminar/', eliminar_comentario, name='eliminar_comentario'),
     path('eliminar_comentario/<int:comentario_id>/', views.eliminar_comentario, name='eliminar_comentario'),
+
+    #path('categoria/<int:id>/', views.filtrar_por_categoria, name='filtrar_por_categoria'),
+    #/posts/alfabeticamente/?orden=asc
+    #path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     #path('editar_comentario/<int:id>/', views.editar_comentario, name='editar_comentario'),
 ]
 
