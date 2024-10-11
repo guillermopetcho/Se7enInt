@@ -52,9 +52,10 @@ urlpatterns = [
     path('posts/fechas/<str:tipo>/', views.fechas, name='listar_posts_fechas'),  # Captura el argumento "tipo"
     
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),  # Ruta para iniciar sesión
-    path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
+    #path('logout/', LogoutView.as_view(next_page='inicio'), name='logout'),  # Ruta para cerrar sesión
     path('signup/', views.signup, name='signup'),# Ruta para registro
-    
+    path('logout/', cerrar_sesion, name='cerrar_sesion'),  # Ruta para cerrar sesión
+
     path('perfil_usuario/<int:user_id>/', perfil_usuario , name='perfil_usuario'),
     path('enviar_mensaje/', enviar_mensaje, name='enviar_mensaje'),
     

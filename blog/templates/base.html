@@ -222,9 +222,9 @@
     <!-- Verifica si el usuario está autenticado -->
     <span style="float: right;">
         {% if user.is_authenticated %}
-        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        <form action="{% url 'cerrar_sesion' %}" method="post">
             {% csrf_token %}
-            <button type="submit">Cerrar sesión</button>
+            <button type="submit">Cerrar Sesión</button>
         </form>
     {% else %}
         <a href="{% url 'login' %}">Iniciar sesión</a> | <a href="{% url 'signup' %}">Registrarse</a>

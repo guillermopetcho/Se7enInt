@@ -13,6 +13,36 @@ from .forms import crearusuario, ProfileForm,PostForm,ComentarioForm
 from django.db.models import Count
 
 # Create your views here.
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import logout
+
+
+def iniciar_sesion(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Has iniciado sesión con éxito.')
+                return redirect('inicio')  # Redirige a la página de inicio después de iniciar sesión
+            else:
+                messages.error(request, 'Nombre de usuario o contraseña incorrectos.')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'registration/login.html', {'form': form})
+
+
+def cerrar_sesion(request):
+    logout(request)  # Cierra la sesión del usuario
+    messages.success(request, 'Has cerrado sesión con éxito.')  # Mensaje de éxito
+    return redirect('inicio')  # Redirige a la página de inicio o a donde desees
+
+
 
 
 ### definicion de vistas ###
@@ -33,7 +63,6 @@ def contactos(request):
 def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
     return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False,'mostrar_fechas': False})
-
 
 
 def perfil_usuario(request, user_id):  
@@ -138,33 +167,21 @@ def post_detalle(request, post_id):
     comentarios = post.comentarios.all()
     es_colaborador = request.user.groups.filter(name='Colaborador').exists()
     es_administrador = request.user.is_staff
-    
-    # verifica si el usuario esta autenticado
     usuario_logeado = request.user.is_authenticated
 
-    # identificar si se esta editando un comentario
-    comentario_id = request.GET.get('edit_comentario', None)
     comentario_a_editar = None
 
+    # Verificar si se va a editar un comentario
+    comentario_id = request.GET.get('edit_comentario', None)
     if comentario_id:
         comentario_a_editar = get_object_or_404(Comentario, id=comentario_id)
 
     if request.method == 'POST':
-        # Si se está editando un comentario
-        if comentario_a_editar and comentario_a_editar.autor_comentario == request.user:
-            form = ComentarioForm(request.POST, instance=comentario_a_editar)
-            if form.is_valid():
-                form.save()
-                return redirect('post_detalle', post_id=post.id)
-        # Si es un nuevo comentario
-        else:
-            form = ComentarioForm(request.POST)
-            if form.is_valid():
-                nuevo_comentario = form.save(commit=False)
-                nuevo_comentario.post = post
-                nuevo_comentario.autor_comentario = request.user
-                nuevo_comentario.save()
-                return redirect('post_detalle', post_id=post.id)
+        # Intentar editar un comentario o crear uno nuevo
+        form, comentario_a_editar = procesar_comentario(request, post, comentario_a_editar)
+
+        if form and form.is_valid():
+            return redirect('post_detalle', post_id=post.id)
     else:
         form = ComentarioForm()
 
@@ -180,6 +197,29 @@ def post_detalle(request, post_id):
         'mostrar_fechas': False,
     }
     return render(request, 'post_detalle.html', context)
+
+
+def procesar_comentario(request, post, comentario_a_editar):
+    if comentario_a_editar and comentario_a_editar.autor_comentario == request.user:
+        # Editar un comentario existente
+        form = ComentarioForm(request.POST, instance=comentario_a_editar)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Comentario editado con éxito.')
+            return form, comentario_a_editar
+    else:
+        # Crear un nuevo comentario
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            nuevo_comentario = form.save(commit=False)
+            nuevo_comentario.post = post
+            nuevo_comentario.autor_comentario = request.user
+            nuevo_comentario.save()
+            messages.success(request, 'Comentario creado con éxito.')
+            return form, None
+
+    return None, None  # Si no se procesó nada
+
 
 
 
@@ -210,15 +250,6 @@ def signup(request):
     })
 
 ### con logeo ###
-@login_required
-def agregar_comentario(request, post_id):
-    if request.method == 'POST' and request.user.is_authenticated:
-        contenido = request.POST.get('contenido')
-        post = get_object_or_404(Post, id=post_id)
-        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
-        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la pag del post
-
-    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST valido
 
 
 @login_required
@@ -266,6 +297,17 @@ def eliminar_comentario(request, comentario_id):
         comentario.delete()
     return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
 
+
+@login_required
+def agregar_comentario(request, post_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        contenido = request.POST.get('contenido')
+        post = get_object_or_404(Post, id=post_id)
+        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
+        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la pag del post
+
+    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST valido
+
 @login_required
 def enviar_mensaje(request):
     if request.method == 'POST':
@@ -289,7 +331,6 @@ def enviar_mensaje(request):
         return redirect('inicio')  # Redirigir a la página de inicio o a una página de agradecimiento
 
     return render(request, 'contacto.html')  # Cambia a tu template si es necesario
-
 
 #####################################################################################################
 ### implementaciones apartes del informatorio ###
