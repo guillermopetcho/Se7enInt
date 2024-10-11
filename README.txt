@@ -3,7 +3,9 @@ Integrantes :
 - Petcho, Guillermo Nicolas.
 
 
--------------- Implementaciones
+
+-------------- Implementaciones en : https://github.com/guillermopetcho/Se7enInt/wiki
+
 
 El perfil Colaborador:
 
