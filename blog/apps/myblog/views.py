@@ -12,6 +12,7 @@ from .models import Post, Comentario, Categoria,MensajeContacto, Profile
 from .forms import crearusuario, ProfileForm,PostForm,ComentarioForm
 from django.db.models import Count
 
+
 # Create your views here.
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -49,10 +50,11 @@ def cerrar_sesion(request):
 def inicio(request):
     ultimos_posts = Post.objects.all().order_by('fecha_publicacion')[:4]
     primeros_posts = Post.objects.all().order_by('-fecha_publicacion')[:4]
-
+    colaborador = request.user.groups.filter(name='Colaborador').exists()
     return render(request, 'inicio.html', {
         'ultimos_posts': ultimos_posts,
         'primeros_posts': primeros_posts,
+        'colaborador': colaborador,
         'mostrar_categorias': True,
         'mostrar_fechas': True
     })
@@ -75,13 +77,38 @@ def perfil_usuario(request, user_id):
         'mostrar_fechas': False
     })
 
+# Verifica si el usuario es colaborador o administrador (staff)
+# Función para verificar si el usuario es colaborador o admin
+def es_colaborador_o_admin(user):
+    if not user.is_authenticated:
+        return False
+    
+    # Verificar si el grupo "Colaborador" existe en la base de datos
+    if not Group.objects.filter(name='Colaborador').exists():
+        print("El grupo 'Colaborador' no existe.")
+        return False
 
+    # Verificar si el usuario pertenece al grupo 'Colaborador' o si es staff
+    return user.groups.filter(name='Colaborador').exists() or user.is_staff
+
+# Verifica si el usuario pertenece al grupo 'Colaborador'
+def es_colaborador(request):
+    es_colaborador = es_colaborador_o_admin(request.user)
+    
+    # Imprimir los grupos del usuario para depurar
+    print("Grupos del usuario:", [group.name for group in request.user.groups.all()])
+
+    context = {
+        'colaborador': es_colaborador,
+    }
+    return render(request, 'inicio.html', context)
 
 ### decorador para verificar si el usuario es colaborador o administrador ###
-def es_colaborador_o_admin(user):
-    return user.groups.filter(name='Colaboradores').exists() or user.is_staff
 
-### definicion de funciones ###
+
+
+
+
 
 
 def listar_posts(request):
@@ -135,7 +162,6 @@ def listar_posts_alfabeticamente(request):
     categorias = Categoria.objects.all()  # Asegúrate de obtener las categorías
 
 
-
     orden = request.GET.get('orden', 'asc')  # Obtener el parámetro de orden de la URL
     if orden == 'desc':
         ultimosposts = Post.objects.all().order_by('-titulo')[:4]  # Ordenar de Z a A
@@ -150,13 +176,15 @@ def listar_posts_alfabeticamente(request):
 
 
 def fechas(request, tipo):
+    categorias = Categoria.objects.all()  # Asegúrate de obtener las categorías
     if tipo == 'recientes':
-        posts = Post.objects.all().order_by('-fecha_publicacion')[:4]  # Más recientes
+        ultimosposts = Post.objects.all().order_by('-fecha_publicacion')[:4]  # Más recientes
     elif tipo == 'antiguos':
-        posts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Más antiguos
+        ultimosposts = Post.objects.all().order_by('fecha_publicacion')[:4]  # Más antiguos
     else:
-        posts = Post.objects.all()  # O una lista vacía, según lo que desees
-    return render(request, 'inicio.html', {'posts': posts, 
+        ultimosposts = Post.objects.all()  # O una lista vacía, según lo que desees
+    return render(request, 'inicio.html', {'ultimosposts': ultimosposts,
+                                           'categorias': categorias, 
                                            'mostrar_cargas': True, 
                                            'mostrar_fechas': True,
                                            'mostrar_categorias': True})

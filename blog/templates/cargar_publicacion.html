@@ -2,12 +2,14 @@
 
 {% load static %}
 {% block content %}
-    <h2>Crear un nuevo post</h2>
 
+<div class="form-container-crear-posts">
+    <h2>Crear un nuevo post</h2>
     <form method="POST" enctype="multipart/form-data">  <!-- Asegúrate de incluir enctype -->
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Crear Post</button>
     </form>
-    
+</div>
+
 {% endblock %}

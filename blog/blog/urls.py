@@ -29,7 +29,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para el panel de administración
     path("inicio/", listar_posts, name="inicio"),  # Ruta para la vista de inicio
     path('', listar_posts, name='listar_posts'),  # Ruta principal para listar posts    #path('posts/', listar_posts, name='listar_posts'),
-    
+    #path('', es_colaborador, name='es_colaborador'),  # Verifica si el usuario es colaborador
+
+
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
     

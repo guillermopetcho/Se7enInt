@@ -2,28 +2,32 @@
 
 {% load static %}
 {% block content %}
-  <h2>Crear cuenta</h2>
-  
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <button type="submit">Registrar</button>
+<div class="container"> <!-- Contenedor principal -->
+  <h2 class="signup">Crear cuenta</h2> <!-- Clase signup añadida -->
+
+  <form method="post" enctype="multipart/form-data" class="signup"> <!-- Clase signup añadida -->
+      {% csrf_token %}
+      {{ user_form.as_p }} <!-- Formulario del usuario -->
+      {{ profile_form.as_p }} <!-- Formulario del perfil -->
+      
+      <button type="submit" class="signup">Registrar</button> <!-- Clase signup añadida -->
   </form>
 
   <!-- Mostrar errores del formulario -->
   {% if form.errors %}
-    <div class="error">
-      <ul>
-        {% for field in form %}
-          {% for error in field.errors %}
-            <li>{{ field.label }}: {{ error }}</li>
-          {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-    </div>
+      <div class="error"> <!-- Clase error añadida -->
+          <ul>
+              {% for field in form %}
+                  {% for error in field.errors %}
+                      <li>{{ field.label }}: {{ error }}</li>
+                  {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+          </ul>
+      </div>
   {% endif %}
+</div>
+
 {% endblock %}

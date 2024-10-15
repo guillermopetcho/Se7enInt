@@ -3,11 +3,11 @@
 
 {% block content %}
 
-<h2>Posts en la categoría: {{ categoria.nombre }}</h2>
+<h2 class="post">Posts en la categoría: {{ categoria.nombre }}</h2>
 <ul>
     {% for post in posts %}
     <article class="post">
-        <h3><a href="{% url 'post_detalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
+        <h3 class="titulo_post"><a class="a_post" href="{% url 'post_detalle' post.id %}">{{ post.titulo }}</a></h3>  <!-- Asegúrate de que el enlace apunte a la vista de detalle del post -->
         {% if post.imagen %}
            <img class="imagen" src="{{ post.imagen.url }}" alt="Imagen de {{ post.titulo }}" />
         {% else %}

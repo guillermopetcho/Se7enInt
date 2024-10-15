@@ -6,70 +6,251 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&display=swap" rel="stylesheet">
     <title>Inicio - Mi Blog</title>
     <style>
         /* Estilos CSS */
+        /* Estilos CSS */
+        @keyframes tracking-in-expand {
+            0% { letter-spacing: -.5em; opacity: 0; }
+            40% { opacity: .6; }
+            100% { opacity: 1; }
+        }
+
+        .tracking-in-expand {
+            animation: tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both;
+        }
+
+        @keyframes scale-in-bl {
+        0% {
+        transform: scale(0);
+        transform-origin: 0 100%;
+        opacity: 1;
+        }
+        100% {
+        transform: scale(1);
+        transform-origin: 0 100%;
+        opacity: 1;
+        }
+        }
+
+        @keyframes text-pop-up-top{
+        0%{
+        transform:translateY(0);
+        transform-origin:50% 50%;
+        text-shadow:none
+        }
+        100% {
+        transform:translateY(-50px);
+        transform-origin:50% 50%;
+        text-shadow:0 1px 0 #ccc,0 2px 0 #ccc,0 3px 0 #ccc,0 4px 0 #ccc,0 5px 0 #ccc,0 6px 0 #ccc,0 7px 0 #ccc,0 8px 0 #ccc,0 9px 0 #ccc,0 50px 30px rgba(0,0,0,.3)}
+        }
+
+       
+        @keyframes text-shadow-drop-right{
+        0%{
+        text-shadow:0 0 0 transparent
+        }
+        100% {
+        text-shadow:6px 0 18px rgba(0,0,0,.35)}
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Libre Franklin", sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: rgb(33, 26, 94); /* Color inicial */
+            -webkit-animation: color-change-2x 2s linear infinite alternate both;
+            animation: color-change-2x 2s linear infinite alternate both;
+        }
+
+        /* Definición de la animación */
+        @-webkit-keyframes color-change-2x {
+            0% {
+                background-color: rgb(55, 49, 112);
+            }
+            100% {
+                background-color: blue;
+            }
+        }
+
+        @keyframes color-change-2x {
+            0% {
+                background-color: rgb(48, 36, 82);
+            }
+            100% {
+                background-color: rgb(14, 14, 43);
+            }
+            
+            
         }
         header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
+            color: #eee;
             text-align: center;
+            font-family: "Jura", serif;
+            font-size: 30px;
+            font-weight: weight;
+            font-style: normal;
+            font-variation-settings:"wdth" 100;
+            background-color:  rgb(33, 26, 94); /* Color inicial */
+            -webkit-animation: color-change-2x 2s linear infinite alternate both;
+            animation: color-change-2x 2s linear infinite alternate both;
+        }
+
+        header h1{
+            animation: tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both;
+        }
+
+        /* Definición de la animación */
+        @-webkit-keyframes color-change-2x {
+            0% {
+                background-color: rgb(55, 49, 112);
+            }
+            100% {
+                background-color: blue;
+            }
+        }
+
+        @keyframes color-change-2x {
+            0% {
+                background-color: rgb(48, 36, 82);
+            }
+            100% {
+                background-color: rgb(22, 22, 58);
+            }
+
+            
+            
         }
         nav {
-            background-color: #444;
+            background-color: #18142c;
             padding: 15px;
             text-align: center;
-        }
+            }
+        
         nav a {
-            color: white;
+            color: rgb(255, 255, 255);
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
             margin: 0 15px;
             text-decoration: none;
             font-size: 18px;
+            animation: tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both;
         }
+        
         nav a:hover {
             text-decoration: underline;
         }
+        /* Estilo para el contenedor */
+        .container {
+            max-width: 100%;
+            width: calc(100% - 10px); /* Ancho del contenedor */
+            margin: 20px auto;
+            flex: 1; /* Tomar el espacio restante */
+            background-color: #837bad02; /* Color de fondo */
+            padding: 10px; /* Espaciado interno */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+            border-radius: 8px; /* Bordes redondeados */
+        }
+        /* Estilo para la barra lateral */
+        .sidebar {
+            background-color: #18142c; /* Color de fondo */
+            font-family: "Libre Franklin", sans-serif; /* Fuente */
+            font-size: 18px; /* Tamaño de fuente */
+            font-weight: 400; /* Peso normal de la fuente */
+            font-style: normal; /* Estilo normal */
+            padding: 10px; /* Espaciado interno */
+            width: calc(25% - 30px); /* Ancho de la sidebar */
+            margin: 15px; /* Margen alrededor */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+            border-radius: 8px; /* Bordes redondeados */
+        }
+        .li_mensaje {
+            list-style-type: none;
+        }
+        /* Estilo para el contenedor principal */
         main {
             display: flex;
             flex: 1; /* Tomar el espacio restante */
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 20px;
+            flex-wrap: wrap; /* Permitir que los elementos se envuelvan */
+            justify-content: space-between; /* Espacio entre elementos */
+            padding: 10px; /* Espaciado interno */
         }
+
+        /* Estilo para cada publicación */
         .post {
-            background-color: white;
-            margin: 15px;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: calc(70% - 10px);
+            background-color: #18142c; /* Color de fondo */
+            margin: 15px; /* Margen alrededor */
+            padding: 20px; /* Espaciado interno */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra */
+            
+            border-radius: 8px; /* Bordes redondeados */
         }
-        .imagen{
-            width: 100%;
+
+        /* Estilo para las imágenes dentro de las publicaciones */
+        .imagen {
+            width: 100%; /* Ancho completo */
+            height: auto; /* Mantener la proporción */
+            border-radius: 8px; /* Bordes redondeados en la imagen */
         }
-        .sidebar {
-            background-color: #eee;
-            padding: 10px;
-            width: calc(25% - 40px);
-            margin: 15px;
+
+        /* Animación para la sombra */
+        .shadow-pop-br {
+            -webkit-animation: shadow-pop-br 0.3s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
+            animation: shadow-pop-br 0.3s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
         }
-        .container{
-            flex: 1; /* Tomar el espacio restante */
-            width: calc(70%);
+
+
+        .sidebar h2 {
+            text-decoration: none; /* Quita el subrayado del enlace */
+            color: #ffffff;
+            font-family: "Jura", serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
         }
-        .post h2, .sidebar h2 {
-            color: #333;
+        .sidebar p {
+            color: #ffffff;
+            font-family: "Jura", serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
         }
         .post p {
-            color: #666;
+            color: #fafafa;
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+        } 
+        .sidebar li{
+            color: #ffffff;
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+        } 
+        .sidebar a{
+            color: #ffffff;
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: bold;
+        } 
+        .post h3, .sidebar h3{
+            color: #ffffff;
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+
         }
         footer {
-            background-color: #333;
+            background-color: #2f2164;
             color: white;
             text-align: center;
             padding: 20px;
@@ -87,6 +268,13 @@
                 align-items: center;
             }
             .post, .sidebar {
+                
+                color: white;
+                text-align: center;
+                padding: 20px;
+                position: relative;
+                bottom: 0;
+                width: 100%;
                 width: 100%;
             }
         }
@@ -97,10 +285,47 @@
         }
         .profile-card {
             text-align: center;
-            background-color: #fff;
-            padding: 20px;
+            background-color: #8E2DE2;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            padding: 10px;
+            text-align: center;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+        }
+        .profile-card:hover .profile-card-background {
+        transform: scale(1.15) translateZ(0);
+        background-size: 300px;
+        }
+
+        .profile-card-grid:hover > .profile-card:not(:hover) .profile-card-background, /* Eliminado el espacio extra */
+        .profile-card-grid:hover > .profile-card:not(:hover) .profile-card-category {   /* Añadido el punto antes de .card */
+        filter: brightness(0.5) saturate(0) contrast(1.2) blur(20px);
+        }
+        
+        .profile-card a {
+            background-color: #8d2de200;
+            color: white;
+            text-align: center;
+            position: central;
+            bottom: 0;
+            width: 100%;
+            width: 100%;
+            margin: 0;
+            color: #000000;
+        }
+        .profile-card p {
+            background-color: #8d2de200;
+            color: white;
+            text-align: center;
+            padding: 0px;
+            position: central;
+            bottom: 0;
+            width: 100%;
+            width: 100%;
+            margin: 0;
+            color: #333;
         }
         .profile-card img {
             width: 150px;
@@ -110,32 +335,118 @@
             margin-bottom: 20px;
         }
         .profile-card h3 {
+            background-color: #8d2de200;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: central;
+            bottom: 0;
+            width: 100%;
+            width: 100%;
             margin: 0;
             color: #333;
         }
         .profile-card p {
-            color: #777;
+            color: #000000;
             font-size: 14px;
             margin: 5px 0;
         }
+                /* Estilo para el encabezado de la publicación */
+        /* Ejemplo de estilos CSS */
+        .titulo_post {
+            font-size: 24px;
+            color: #ffffff; /* Cambia el color a tu preferencia */
+            margin-bottom: 10px;
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+            font-size: 35px;
+
+        }
+        .a_post{
+            text-decoration: none;
+            color: #ffffffd3;
+        }
+
+        .imagen {
+            width: 100%;
+            height: auto;
+            border-radius: 8px; /* Bordes redondeados opcional */
+        }
+
+        .resumen_inicio {
+            font-size: 16px;
+            color: #666; /* Cambia el color a tu preferencia */
+        }
+
+        /* Estilo para el contenedor de publicaciones */
+        .ul_posts_inicio {
+            list-style-type: none; /* Elimina las viñetas */
+            padding: 0; /* Elimina el padding */
+        }
+
+        /* Estilo para los elementos de la lista */
+        .ul_posts_inicio li {
+            margin-bottom: 20px; /* Espacio entre cada publicación */
+            background-color: #f7f7f7; /* Color de fondo */
+            padding: 15px; /* Espaciado interno */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+       
+        .ul_posts_inicio{
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .resumen_inicio{
+            white-space: pre-wrap;
+            text-align: justify;
+        }
+        .contenido_post, .fecha_publicacion_post {
+            line-height: 1.6;
+            color: #ffffff;
+        }
+
+        .contenido_post{
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+            color: #ffffff
+        }
+        .fecha_publicacion_post{
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+            font-size: 12px;
+        }
+
+
+
+        /* Estilo para acerca de */
         .container_acerca_de {
-            max-width: 1000px;
+            max-width: 100%;
             margin: 50px auto;
             padding: 20px;
-            background-color: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #18142c;
+            box-shadow: 0px 0px 10px rgba(188, 161, 204, 0.144);
         }
         .h2_acerca_de {
             text-align: center;
-            color: #333;
+            color: #ffffff;
         }
+
 
         /* Estilos para el formulario de contacto */
         .container_contacto {
-            max-width: 800px;
+            max-width: 100%;
             margin: 50px auto;
             padding: 20px;
-            background-color: white;
+            background-color: #837bad98;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
         .contact_form {
@@ -173,6 +484,8 @@
             text-align: center;
             color: #333;
         }
+
+
         /* Estilos CSS para el perfil de un usuario */
         .profile-info {
             display: flex;
@@ -200,6 +513,325 @@
         .btn-edit:hover {
             background-color: #555;
         }
+
+
+
+
+
+        /* Estilos para el formulario de comentarios */
+        .a_comentarios{
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .comentarios{
+            font-size: 14px;
+            color: #000000;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .li_comentarios{
+            list-style-type: none;  /* Elimina los puntos de la lista */
+            padding: 0;
+            margin: 0;
+        }
+        .p_comentarios{
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .comentarios_titulo{
+            font-family: "Libre Franklin", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .p_fecha_comentarios{
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .comment-form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Estilo para el título del formulario */
+        .h4_comentarios {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #dfdfdf;
+            text-align: center;
+        }
+
+        /* Estilos para los campos del formulario */
+        .comment-form p {
+            margin-bottom: 20px;
+        }
+
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #d1d1d1;
+        }
+
+        /* Estilo específico para el campo de comentario (textarea) */
+        .comment-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Estilo para el botón de envío */
+        .comment-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .comment-form button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* Contenedor principal del formulario */
+        .form-container-crear-posts {
+            max-width: 1000px; /* Ancho máximo del formulario */
+            margin: 20px 20px; /* Centrar horizontalmente */
+            padding: 20px; /* Espaciado interno */
+            background-color: #f9f9f9; /* Color de fondo */
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+            font-family: 'Arial', sans-serif; /* Fuente */
+        }
+
+        /* Título del formulario */
+        h2-crear-posts {
+            text-align: center; /* Centrar el título */
+            color: #333; /* Color del texto */
+        }
+
+        /* Estilo para los campos de formulario */
+        .form-container-crear-posts form {
+            display: flex; /* Usar flexbox para alinear los elementos */
+            flex-direction: column; /* Apilar verticalmente */
+        }
+
+        /* Estilo para los párrafos del formulario (input, textarea) */
+        .form-container-crear-posts form p {
+            margin-bottom: 20px; /* Margen inferior */
+        }
+
+        /* Estilo para los campos de entrada */
+        .form-container-crear-posts input[type="text"],
+        .form-container-crear-posts input[type="email"],
+        .form-container-crear-posts textarea,
+        .form-container-crear-posts input[type="file"] {
+            max-width: 900px;
+            width: 100%; /* Ancho completo */
+            padding: 12px; /* Espaciado interno */
+            border: 1px solid #ddd; /* Borde */
+            border-radius: 5px; /* Bordes redondeados */
+            font-size: 16px; /* Tamaño de fuente */
+            color: #333; /* Color del texto */
+        }
+
+        /* Estilo específico para el área de texto (contenido del post) */
+        .form-container-crear-posts textarea {
+            min-height: 200px; /* Altura mínima */
+            resize: vertical; /* Permitir redimensionar verticalmente */
+        }
+
+        /* Estilo para el botón de envío */
+        .form-container-crear-posts button {
+            padding: 12px; /* Espaciado interno */
+            background-color: #007BFF; /* Color de fondo del botón */
+            color: white; /* Color del texto */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            font-size: 18px; /* Tamaño de fuente */
+            cursor: pointer; /* Cambiar el cursor al pasar el ratón */
+            transition: background-color 0.3s ease; /* Transición suave para el fondo */
+        }
+
+        .form-container-crear-posts button:hover {
+            background-color: #0056b3; /* Color de fondo en hover */
+        }
+
+        /* Mensajes de error */
+        .error-message-crear-posts {
+            color: red; /* Color de los mensajes de error */
+            font-size: 14px; /* Tamaño de fuente */
+            margin-top: -15px; /* Margen superior negativo para alineación */
+            margin-bottom: 10px; /* Margen inferior */
+        }
+
+
+
+
+
+        /* Estilos para logeo*/
+
+        /* Estilo para el encabezado de inicio de sesión */
+        h2.logeo { /* Cambié "h2-logeo" a "h2.logeo" */
+            text-align: center; /* Centrar el texto */
+            color: #fdfafa; /* Color del texto */
+            font-family: "Jura", serif; /* Fuente */
+            font-size: 24px; /* Tamaño de fuente */
+            margin-bottom: 20px; /* Espacio debajo del encabezado */
+        }
+
+        /* Estilo para el formulario */
+        form.logeo { /* Cambié "form-logeo" a "form.logeo" */
+            background-color: #ffffff; /* Color de fondo del formulario */
+            padding: 20px; /* Espaciado interno */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+            max-width: 400px; /* Ancho máximo del formulario */
+            margin: 0 auto; /* Centrar el formulario */
+        }
+
+        /* Estilo para los campos del formulario */
+        form.logeo input[type="text"],
+        form.logeo input[type="password"],
+        form.logeo input[type="email"] {
+            width: 95%; /* Ancho completo */
+            padding: 10px; /* Espaciado interno */
+            margin: 10px 0; /* Espacio entre los campos */
+            border: 1px solid #ccc; /* Borde */
+            border-radius: 4px; /* Bordes redondeados */
+        }
+
+        /* Estilo para el botón */
+        button.logeo { /* Cambié "button-logeo" a "button.logeo" */
+            background-color: #5a5a5a; /* Color de fondo del botón */
+            color: #ffffff; /* Color del texto del botón */
+            padding: 10px 15px; /* Espaciado interno */
+            border: none; /* Sin borde */
+            border-radius: 4px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar por encima */
+            font-size: 16px; /* Tamaño de fuente */
+            width: 100%; /* Ancho completo */
+            margin-top: 10px; /* Espacio encima del botón */
+        }
+
+        /* Efecto de hover para el botón */
+        button.logeo:hover { /* Cambié "button-logeo :hover" a "button.logeo:hover" */
+            background-color: #4a4a4a; /* Color de fondo del botón al pasar el mouse */
+        }
+
+        /* Estilo para los mensajes de alerta */
+        .alert.logeo { /* Cambié ".alert-logeo" a ".alert.logeo" */
+            background-color: #f8d7da; /* Color de fondo del mensaje de alerta */
+            color: #721c24; /* Color del texto del mensaje */
+            padding: 10px; /* Espaciado interno */
+            margin-top: 10px; /* Espacio encima del mensaje */
+            border-radius: 4px; /* Bordes redondeados */
+            border: 1px solid #f5c6cb; /* Borde */
+        }
+    
+
+
+
+        /* Estilo para el Crear Usuario */
+
+        /* Estilo para el encabezado de crear cuenta */
+        h2.signup {
+            text-align: center; /* Centrar el texto */
+            color: #ffffff; /* Color del texto */
+            font-family: "Jura", serif; /* Fuente */
+            font-size: 24px; /* Tamaño de fuente */
+            margin-bottom: 20px; /* Espacio debajo del encabezado */
+        }
+
+        /* Estilo para el formulario */
+        form.signup {
+            background-color: #ffffff; /* Color de fondo del formulario */
+            padding: 20px; /* Espaciado interno */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+            max-width: 100%; /* Ancho máximo del formulario */
+            margin: 0 auto; /* Centrar el formulario */
+        }
+
+        /* Estilo para los campos del formulario */
+        form.signup input[type="text"],
+        form.signup input[type="password"],
+        form.signup input[type="email"],
+        form.signup input[type="file"] { /* Añadido para campos de archivo */
+            width: 95%; /* Ancho completo */
+            padding: 10px; /* Espaciado interno */
+            margin: 10px 0; /* Espacio entre los campos */
+            border: 1px solid #ccc; /* Borde */
+            border-radius: 4px; /* Bordes redondeados */
+        }
+
+        /* Estilo para el botón */
+        button.signup {
+            background-color: #5a5a5a; /* Color de fondo del botón */
+            color: #ffffff; /* Color del texto del botón */
+            padding: 10px 15px; /* Espaciado interno */
+            border: none; /* Sin borde */
+            border-radius: 4px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar por encima */
+            font-size: 16px; /* Tamaño de fuente */
+            width: 100%; /* Ancho completo */
+            margin-top: 10px; /* Espacio encima del botón */
+        }
+
+        /* Efecto de hover para el botón */
+        button.signup:hover {
+            background-color: #4a4a4a; /* Color de fondo del botón al pasar el mouse */
+        }
+
+        /* Estilo para los mensajes de error */
+        .error {
+            background-color: #f8d7da; /* Color de fondo del mensaje de error */
+            color: #721c24; /* Color del texto del mensaje */
+            padding: 10px; /* Espaciado interno */
+            margin-top: 10px; /* Espacio encima del mensaje */
+            border-radius: 4px; /* Bordes redondeados */
+            border: 1px solid #f5c6cb; /* Borde */
+        }
+
+        /* Estilo para los elementos de la lista de errores */
+        .error ul {
+            list-style-type: none; /* Quitar viñetas de la lista */
+            padding: 0; /* Quitar espaciado interno */
+        }
+
+        /* Estilo para cada error */
+        .error li {
+            margin: 5px 0; /* Espacio entre los errores */
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -218,6 +850,7 @@
     <a href="{% url 'inicio' %}">Inicio</a>
     <a href="{% url 'acerca_de' %}">Sobre mí</a>
     <a href="{% url 'contacto' %}">Contacto</a>
+    
 
     <!-- Verifica si el usuario está autenticado -->
     <span style="float: right;">
@@ -240,7 +873,6 @@
 
         {% endblock %}
 
-</ul>
 
     </section>    
 
@@ -287,9 +919,16 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <!-- Esta parte es para administradores -->
         {% endif %}
+        
+        <!-- Esta parte es para administradores -->
         {% if user.is_authenticated %}
+
+            {% if colaborador %}
+            <p>Bienvenido, Colaborador</p>
+            <a href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
+            {% endif %}
+
             {% if user.is_staff %}
             <hr>
                 <h3>Panel de Administrador:</h3>
@@ -305,14 +944,11 @@
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li>No hay mensajes disponibles.</li>
+                    <li class = "li_mensaje">No hay mensajes disponibles.</li>
                 {% endif %}
                 </ul>
             {% endif %}
         {% endif %}
-
-
-
 
     </aside>
 </main>

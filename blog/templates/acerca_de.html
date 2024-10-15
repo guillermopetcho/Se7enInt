@@ -9,6 +9,9 @@
     <div class="profile-grid">
         {% for admin in administradores %}
         <div class="profile-card">
+            {% if admin.profile.photo %}
+                <img src="{{ admin.profile.photo.url }}" alt="Foto de perfil">
+            {% endif %}
             <h3><a href="{% url 'perfil_usuario' admin.id %}">{{ admin.username }}</a></h3>
             <p>Correo: {{ admin.email }}</p>
             <p>Nombre: {{ admin.first_name }}</p>  <!-- Si tienes un modelo de perfil relacionado -->

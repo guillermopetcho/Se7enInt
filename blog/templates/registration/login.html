@@ -4,17 +4,20 @@
 
 {% block content %}
 
-<h2>Iniciar Sesión</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <button type="submit">Ingresar</button>
-</form>
+<div class="container"> <!-- Contenedor principal -->
+    <h2 class="logeo">Iniciar Sesión</h2> <!-- Clase logeo añadida -->
+    <form method="post" class="logeo"> <!-- Clase logeo añadida -->
+        {% csrf_token %}
+        {{ form.as_p }} <!-- Renderiza los campos del formulario -->
+        
+        <button type="submit" class="logeo">Ingresar</button> <!-- Clase logeo añadida -->
+    </form>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert">{{ message }}</div>
-    {% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert logeo">{{ message }}</div> <!-- Clase logeo añadida -->
+        {% endfor %}
+    {% endif %}
+</div>
+
 {% endblock %}

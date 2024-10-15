@@ -3,51 +3,65 @@
 {% load static %}
 
 {% block content %}
-{% if colaborador or administrador %}
-    <a href="{% url 'editar_post' post.id %}" class="btn btn-primary">Editar Post</a>
-{% endif %}
-  <h2>{{ post.titulo }}</h2>
-  <p>{{ post.contenido }}</p>
+<div class = "post_detalle">
+  {% if colaborador or administrador %}
+      <a href="{% url 'editar_post' post.id %}" class="btn btn-primary">Editar Post</a>
+  {% endif %}
+  <h2 class = "titulo_post">{{ post.titulo }}</h2>
 
   <img class="imagen" src="{{ post.imagen.url }}" alt="Imagen de {{ post.titulo }}" />
+  <div class = "contenido_post">
+  <p >{{ post.contenido|linebreaks|safe }}</p>
+  </div>
+  <p class = "fecha_publicacion_post">Fecha publicación: {{ post.fecha_publicacion }}</p>
+  <p class = "autor_post">Autor: {{ post.autor }}</p>
+  <hr>
+</div>
 
-  <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
-  <p>Autor: {{ post.autor }}</p>
+  <div class = "comentarios">
+    <h3 class = "comentarios_titulo">Comentarios</h3>
+    <ul class="ul_cometnarios">
+      {% for comentario in comentarios %}
+        <li class="li_comentarios">
 
-  <h3>Comentarios</h3>
-  <ul>
-    {% for comentario in comentarios %}
-      <li>
-        <p>{{ comentario.cuerpo_comentario }}</p>
-        <a href="{% url 'perfil_usuario' comentario.autor_comentario.id %}">{{ comentario.autor_comentario }}</a>        {% if usuario_logeado and comentario.autor_comentario == request.user or request.user.is_staff %}
-          <!-- Botón de editar -->
-          <a href="?edit_comentario={{ comentario.id }}">Editar</a>
+          <a class = "a_comentarios" href="{% url 'perfil_usuario' comentario.autor_comentario.id %}">{{ comentario.autor_comentario }}</a>        
           
-          <!-- Botón de eliminar -->
-          <form action="{% url 'eliminar_comentario' comentario.id %}" method="post">
+          <p class="p_comentarios">{{ comentario.cuerpo_comentario }}</p>
+          
+          
+          <p class="p_fecha_comentarios">{{ comentario.fecha_creacion }}</p>
+          
+          {% if usuario_logeado and comentario.autor_comentario == request.user or request.user.is_staff %}
+          <!-- Botón de editar -->
+            <a href="?edit_comentario={{ comentario.id }}">Editar</a>
+
+            <!-- Botón de eliminar -->
+            <form action="{% url 'eliminar_comentario' comentario.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Eliminar</button>
+            </form>
+          {% endif %}
+
+            <!-- Formulario para editar el comentario si es el comentario seleccionado -->
+          {% if comentario_a_editar and comentario_a_editar.id == comentario.id %}
+            <form method="post">
               {% csrf_token %}
-              <button type="submit">Eliminar</button>
-          </form>
-        {% endif %}
+              {{ form.as_p }}
+              <button type="submit">Guardar cambios</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-        <!-- Formulario para editar el comentario si es el comentario seleccionado -->
-        {% if comentario_a_editar and comentario_a_editar.id == comentario.id %}
-          <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Guardar cambios</button>
-          </form>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
+<!-- Formulario para nuevo comentario -->
 
-  <!-- Formulario para nuevo comentario -->
-  <h4>Agregar un comentario</h4>
-  <form method="post">
+<h4 class="h4_comentarios">Agregar un comentario</h4>
+<form method="post" class="comment-form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Comentar</button>
-  </form>
+</form>
 
 {% endblock %}
