@@ -27,6 +27,7 @@
 
 
 
+
         {% if listar_posts_alfabeticamente %}
 
         <ul>
@@ -56,7 +57,8 @@
                     <p>Contenido: {{ post.resumen }}</p>
                     <p>Fecha publicación: {{ post.fecha_publicacion }}</p>
                     <p>Autor: {{ post.autor }}</p>
-                    <a href="{% url 'post_detalle' post.id %}">Leer más</a>
+                    <a class="leer_mas" href="{% url 'post_detalle' post.id %}">Leer más</a>
+
                 </article>
                 {% empty %}
                     <p>No hay posts disponibles.</p>  <!-- Mensaje si no hay posts -->

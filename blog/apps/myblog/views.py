@@ -66,15 +66,18 @@ def acerca_de(request):
     administradores = User.objects.filter(is_staff=True)  # Filtrar solo los usuarios administradores
     return render(request, 'acerca_de.html', {'administradores': administradores,'mostrar_categorias': False,'mostrar_fechas': False})
 
-
+@login_required
 def perfil_usuario(request, user_id):  
     usuario = get_object_or_404(User, id=user_id)
     profile = get_object_or_404(Profile, user__id=user_id)
+    colaborador = request.user.groups.filter(name='Colaborador').exists()
     return render(request, 'perfil_usuario.html', {
         'usuario': usuario,
         'profile': profile,
         'mostrar_categorias': False,
-        'mostrar_fechas': False
+        'mostrar_fechas': False,
+        'usuario': request.user,
+        'colaborador': colaborador
     })
 
 # Verifica si el usuario es colaborador o administrador (staff)
@@ -92,11 +95,8 @@ def es_colaborador_o_admin(user):
     return user.groups.filter(name='Colaborador').exists() or user.is_staff
 
 # Verifica si el usuario pertenece al grupo 'Colaborador'
-def es_colaborador(request):
-    es_colaborador = es_colaborador_o_admin(request.user)
-    
-    # Imprimir los grupos del usuario para depurar
-    print("Grupos del usuario:", [group.name for group in request.user.groups.all()])
+def colaborador(request):
+    es_colaborador = request.user.groups.filter(name='Colaborador').exists()
 
     context = {
         'colaborador': es_colaborador,
@@ -106,6 +106,9 @@ def es_colaborador(request):
 ### decorador para verificar si el usuario es colaborador o administrador ###
 
 
+def mi_vista(request):
+    es_colaborador = request.user.is_authenticated and request.user.groups.filter(name='colaborador').exists()
+    return render(request, 'inicio.html', {'colaborador': es_colaborador})
 
 
 
@@ -114,8 +117,7 @@ def es_colaborador(request):
 def listar_posts(request):
     posts = Post.objects.all()  # Obtén todos los posts
     categorias = Categoria.objects.all()  # Obtén todas las categorías
-    ultimosposts = Post.objects.all().order_by('fecha_publicacion')  # Cambia si necesitas limitar e numero de posts
-
+    ultimosposts = Post.objects.all().order_by('fecha_publicacion')  # Cambia si necesitas limitar e numero de post
     ultimos_mensajes = MensajeContacto.objects.order_by('-fecha_envio')[:3]
     ## implementacion
 
@@ -316,6 +318,22 @@ def editar_post(request, id):
 
     return render(request, 'editar_post.html', {'form': form, 'post': post})
 
+
+@login_required
+def eliminar_post(request, post_id):
+    # Obtener el post que se desea eliminar
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Verifica si el usuario es el autor o un administrador
+    if post.autor == request.user or request.user.is_staff:
+        if request.method == 'POST':
+            post.delete()  # Elimina el post
+            return redirect('inicio')  # Redirige a la página principal después de eliminar
+        return render(request, 'confirmar_eliminacion.html', {'post': post})
+    else:
+        return HttpResponseForbidden("No tienes permiso para eliminar este post.")  # Mensaje de error si no tiene permisos
+
+
 @login_required
 def eliminar_comentario(request, comentario_id):
     comentario = get_object_or_404(Comentario, id=comentario_id)
@@ -328,13 +346,24 @@ def eliminar_comentario(request, comentario_id):
 
 @login_required
 def agregar_comentario(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
     if request.method == 'POST' and request.user.is_authenticated:
         contenido = request.POST.get('contenido')
-        post = get_object_or_404(Post, id=post_id)
-        Comentario.objects.create(autor_comentario=request.user, post=post, cuerpo_comentario=contenido)
-        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la pag del post
 
-    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo si no es un POST valido
+        if contenido:  # Verificamos que el contenido no esté vacío
+            Comentario.objects.create(
+                autor_comentario=request.user,
+                post=post,
+                cuerpo_comentario=contenido
+            )
+            messages.success(request, '¡Comentario agregado con éxito!')  # Mensaje de éxito
+        else:
+            messages.error(request, 'No puedes enviar un comentario vacío.')  # Manejo de error
+
+        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo a la página del post
+
+    return redirect('post_detalle', post_id=post_id)  # Redirige si no es un POST válido
 
 @login_required
 def enviar_mensaje(request):

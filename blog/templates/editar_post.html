@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container">
+    <div class="form-container-crear-posts">
         <h2>Editar Post: {{ post.titulo }}</h2>
         
         <!-- Formulario de edición del post -->
@@ -12,8 +12,9 @@
             <!-- Botón para guardar cambios -->
             <button type="submit" class="btn btn-success">Guardar cambios</button>
 
+            
             <!-- Botón para cancelar la edición, redirige de vuelta a la vista de detalle del post -->
-            <a href="{% url 'post_detalle' post.id %}" class="btn btn-secondary">Cancelar</a>
+            <a href="{% url 'post_detalle' post.id %}" class="btn_edit">Cancelar</a>
         </form>
     </div>
 {% endblock %}

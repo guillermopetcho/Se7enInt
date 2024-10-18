@@ -29,8 +29,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para el panel de administración
     path("inicio/", listar_posts, name="inicio"),  # Ruta para la vista de inicio
     path('', listar_posts, name='listar_posts'),  # Ruta principal para listar posts    #path('posts/', listar_posts, name='listar_posts'),
-    #path('', es_colaborador, name='es_colaborador'),  # Verifica si el usuario es colaborador
-
+    #path('', colaborador, name='colaborador'),  # Verifica si el usuario es colaborador
+    
 
     path("acerca_de/", acerca_de, name="acerca_de"),  # Ruta para la vista "Acerca de"
     path("contacto/", contactos, name="contacto"),    # Ruta para la vista de contacto
@@ -39,7 +39,7 @@ urlpatterns = [
     path('posts/alfabeticamente/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
     path('categoria/<int:categoria_id>/', views.listar_posts_por_categoria, name='listar_posts_por_categoria'),
 
-
+    path('post/<int:post_id>/eliminar/', views.eliminar_post, name='eliminar_post'),
     path('post/<int:post_id>/comentario/', agregar_comentario, name='agregar_comentario'),
     path('post/<int:post_id>/', post_detalle, name='post_detalle'),
     path('post/<int:id>/', post_detalle, name='post_detalle'),
