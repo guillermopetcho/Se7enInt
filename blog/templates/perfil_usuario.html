@@ -5,7 +5,6 @@
 {% block content %}
 
 <section>
-
     <div class="profile-card">
         <h3>{{ usuario.username }}</h3>
         {% if profile.photo %}
@@ -13,13 +12,12 @@
         {% else %}
             <p>No se ha cargado una foto de perfil.</p>
         {% endif %}
-    
-
+        
         <p>Correo: {{ usuario.email }}</p>
         <p>Nombre: {{ usuario.first_name }}</p>
         <p>Apellidos: {{ usuario.last_name }}</p>
 
-        {% if es_colaborador %}
+        {% if es_perfil_propio and colaborador %}
             <p>Bienvenido, Colaborador</p>
             <a class="btn_edit" href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
         {% endif %}
@@ -29,15 +27,7 @@
                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
-
-        {% if colaborador %}
-            <p>Bienvenido, Colaborador</p>
-            <a class="btn_edit" href="{% url 'cargar_publicacion' %}">Crear nuevo post</a>
-        {% endif %}
-
-    </div>
-    <div >
-
     </div>
 </section>
+
 {% endblock %}

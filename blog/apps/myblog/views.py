@@ -68,17 +68,27 @@ def acerca_de(request):
 
 @login_required
 def perfil_usuario(request, user_id):  
+    # Obtener el usuario cuyo perfil se está viendo
     usuario = get_object_or_404(User, id=user_id)
+    # Obtener el perfil relacionado con ese usuario
     profile = get_object_or_404(Profile, user__id=user_id)
+    
+    # Verificar si el usuario autenticado pertenece al grupo "Colaborador"
     colaborador = request.user.groups.filter(name='Colaborador').exists()
+
+    # Verificar si el usuario autenticado está viendo su propio perfil
+    es_perfil_propio = request.user == usuario
+
+    # Pasar al template el usuario del perfil, y si es colaborador o es su propio perfil
     return render(request, 'perfil_usuario.html', {
-        'usuario': usuario,
-        'profile': profile,
+        'usuario': usuario,  # El usuario cuyo perfil se está visualizando
+        'profile': profile,  # El perfil del usuario que se está visualizando
+        'colaborador': colaborador,  # Si el usuario autenticado es colaborador
+        'es_perfil_propio': es_perfil_propio,  # Si el perfil es del usuario autenticado
         'mostrar_categorias': False,
         'mostrar_fechas': False,
-        'usuario': request.user,
-        'colaborador': colaborador
     })
+
 
 # Verifica si el usuario es colaborador o administrador (staff)
 # Función para verificar si el usuario es colaborador o admin
@@ -230,13 +240,27 @@ def post_detalle(request, post_id):
 
 
 def procesar_comentario(request, post, comentario_a_editar):
-    if comentario_a_editar and comentario_a_editar.autor_comentario == request.user:
-        # Editar un comentario existente
-        form = ComentarioForm(request.POST, instance=comentario_a_editar)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Comentario editado con éxito.')
-            return form, comentario_a_editar
+    if comentario_a_editar:
+        # Verifica si el usuario es el autor, un administrador o un colaborador
+        if (
+            comentario_a_editar.autor_comentario == request.user or
+            request.user.is_staff or
+            request.user.groups.filter(name='Colaboradores').exists()
+        ):
+            # Editar un comentario existente
+            form = ComentarioForm(request.POST, instance=comentario_a_editar)
+            if form.is_valid():
+                # Mantener el autor original del comentario
+                comentario_original = comentario_a_editar.autor_comentario
+                form.save()
+
+                # Mostrar una alerta si quien edita no es el autor original
+                if request.user != comentario_original:
+                    messages.warning(request, f'El comentario ha sido editado por {request.user.username}.')
+                else:
+                    messages.success(request, 'Comentario editado con éxito.')
+
+                return form, comentario_a_editar
     else:
         # Crear un nuevo comentario
         form = ComentarioForm(request.POST)
@@ -249,7 +273,6 @@ def procesar_comentario(request, post, comentario_a_editar):
             return form, None
 
     return None, None  # Si no se procesó nada
-
 
 
 
@@ -339,9 +362,14 @@ def eliminar_comentario(request, comentario_id):
     comentario = get_object_or_404(Comentario, id=comentario_id)
     post_id = comentario.post.id  # Almacenar el ID del post antes de eliminar el comentario
 
-    if request.user == comentario.autor_comentario or request.user.is_staff:  # Solo el autor o admin pueden eliminar
+    # Verificar si el usuario autenticado es el autor, administrador o colaborador
+    es_colaborador = request.user.groups.filter(name='Colaborador').exists()
+
+    if request.user == comentario.autor_comentario or request.user.is_staff or es_colaborador:  # Autor, admin o colaborador pueden eliminar
         comentario.delete()
-    return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
+        return redirect('post_detalle', post_id=post_id)  # Redirige de nuevo al detalle del post
+    else:
+        return HttpResponseForbidden("No tienes permiso para eliminar este comentario.")  # Mensaje de error si no tiene permisos
 
 
 @login_required

@@ -39,7 +39,7 @@
           
           <p class="p_fecha_comentarios">{{ comentario.fecha_creacion }}</p>
           
-          {% if usuario_logeado and comentario.autor_comentario == request.user or request.user.is_staff %}
+          {% if usuario_logeado and comentario.autor_comentario == request.user or request.user.is_staff or colaborador %}
           <div class="comentario-acciones">
             <!-- Botón de editar -->
             <a href="?edit_comentario={{ comentario.id }}">Editar</a>
